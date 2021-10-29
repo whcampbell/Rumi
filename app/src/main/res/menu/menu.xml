@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/calendar"
+        android:icon="@drawable/ic_cal"
+        android:title="Calendar"
+        />
+    <item
+        android:id="@+id/chores"
+        android:icon="@drawable/ic_chores"
+        android:title="Chores"
+        />
+    <item
+        android:id="@+id/dashboard"
+        android:icon="@drawable/ic_dash"
+        android:title="Dashboard"
+        />
+    <item
+        android:id="@+id/payments"
+        android:icon="@drawable/ic_pay"
+        android:title="Payments"
+        />
+    <item
+        android:id="@+id/agreements"
+        android:icon="@drawable/ic_agree"
+        android:title="Agreements"
+        />
+
+</menu>
