@@ -6,10 +6,21 @@
     tools:context=".calendar">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/CalText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="calendar"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="60dp"
+        android:text="Calendar"
+        android:textSize="20dp" />
+
+    <CalendarView
+        android:id="@+id/calendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="90dp" />
+
+
 
 </FrameLayout>
