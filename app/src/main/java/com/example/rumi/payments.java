@@ -1,5 +1,6 @@
 package com.example.rumi;
 
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -36,15 +37,11 @@ public class payments extends Fragment {
         addPaymentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TextView temp = new TextView(view.getContext());
-                temp.setGravity(Gravity.CENTER_HORIZONTAL);
-                temp.setText("this is a payments temp notification");
-                LinearLayout layout = getView().findViewById(R.id.myLinearView);
+
+                PaymentsDialogAdd payLog = new PaymentsDialogAdd();
+                payLog.show(getChildFragmentManager(), "events dialog");
 
 
-                temp.setGravity(Gravity.LEFT);
-
-                layout.addView(temp);
             }
         });
 
