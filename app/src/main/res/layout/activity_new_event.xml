@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".newEventActivity">
+
+    <EditText
+        android:id="@+id/eTextLocation"
+        android:layout_width="296dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="356dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="No Location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/eTextName"
+        android:layout_width="296dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="New Event"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextDate"
+        android:layout_width="188dp"
+        android:layout_height="43dp"
+        android:ems="10"
+        android:inputType="date"
+        app:layout_constraintStart_toEndOf="@+id/textViewDate"
+        app:layout_constraintTop_toTopOf="@+id/textViewDate" />
+
+    <EditText
+        android:id="@+id/editTextTime"
+        android:layout_width="185dp"
+        android:layout_height="47dp"
+        android:ems="10"
+        android:inputType="time"
+        app:layout_constraintStart_toEndOf="@+id/textViewTime"
+        app:layout_constraintTop_toTopOf="@+id/textViewTime" />
+
+
+    <TextView
+        android:id="@+id/textViewDate"
+        android:layout_width="53dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="120dp"
+        android:text="Date:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="56dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="220dp"
+        android:text="Time:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="@+id/editTextTime"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTime">
+
+        <RadioButton
+            android:id="@+id/radio_pm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PM"
+            app:layout_constraintStart_toEndOf="@+id/radio_am"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTime" />
+
+        <RadioButton
+            android:id="@+id/radio_am"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AM"
+            app:layout_constraintStart_toStartOf="@+id/editTextTime"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTime" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="439dp"
+        android:text="Create Event"
+        android:onClick="onClickCreate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

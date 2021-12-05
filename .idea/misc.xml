@@ -8,6 +8,7 @@
         <entry key="app/src/main/res/drawable/ic_dash.xml" value="0.18072916666666666" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.18072916666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1503623188405797" />
+        <entry key="app/src/main/res/layout/activity_new_event.xml" value="0.31049966598661133" />
         <entry key="app/src/main/res/layout/fragment_agreements.xml" value="0.1503623188405797" />
         <entry key="app/src/main/res/layout/fragment_calendar.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_chores.xml" value="0.1503623188405797" />
