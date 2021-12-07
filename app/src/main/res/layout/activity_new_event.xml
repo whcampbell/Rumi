@@ -84,6 +84,7 @@
             android:id="@+id/radio_pm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:text="PM"
             app:layout_constraintStart_toEndOf="@+id/radio_am"
             app:layout_constraintTop_toBottomOf="@+id/editTextTime" />
@@ -92,6 +93,7 @@
             android:id="@+id/radio_am"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:text="AM"
             app:layout_constraintStart_toStartOf="@+id/editTextTime"
             app:layout_constraintTop_toBottomOf="@+id/editTextTime" />
@@ -101,11 +103,21 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="439dp"
-        android:text="Create Event"
+        android:layout_marginTop="424dp"
+        android:layout_marginEnd="16dp"
         android:onClick="onClickCreate"
+        android:text="Create Event"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="424dp"
+        android:text="Cancel"
+        android:onClick="onClickCancel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
