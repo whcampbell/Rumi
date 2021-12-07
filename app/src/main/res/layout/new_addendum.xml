@@ -1,32 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
-
-    <EditText
-        android:id="@+id/addendumBody"
-        android:layout_width="fill_parent"
-        android:layout_height="200dp"
-        android:gravity="center_vertical"
-        android:hint="Enter addendum here..." />
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".newAddendumActivity">
 
     <TextView
-        android:id="@+id/addendumSigner"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:gravity="center"
-        android:text="Signer" />
+        android:id="@+id/topText"
+        android:layout_width="296dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="36dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="New Addendum"
+        app:layout_constraintBottom_toTopOf="@+id/editTextBody"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewBody"
+        android:layout_width="100dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="120dp"
+        android:text="Addendum:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextBody"
+        android:layout_width="188dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="572dp"
+        android:ems="10"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewBody"
+        app:layout_constraintTop_toBottomOf="@+id/topText" />
+
+    <TextView
+        android:id="@+id/textViewSigner"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="220dp"
+        android:text="Signer:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextSigner"
+        android:layout_width="185dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginBottom="572dp"
+        android:ems="10"
+        app:layout_constraintStart_toEndOf="@+id/textViewSigner"
+        app:layout_constraintTop_toTopOf="@+id/textViewSigner" />
+
+    <Button
+        android:id="@+id/createButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="312dp"
+        android:layout_marginEnd="48dp"
+        android:onClick="onClickCreate"
+        android:text="Create Agreement"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/cancelButton"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:onClick="onCancel" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="312dp"
+        android:onClick="onClickCancel"
+        android:text="Cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/doneButton"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:onClick="onDone" />
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
