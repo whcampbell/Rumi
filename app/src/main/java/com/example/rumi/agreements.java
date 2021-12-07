@@ -33,6 +33,16 @@ public class agreements extends Fragment {
         // TODO: populate list with Agreement objects using info from DB
     }
 
+    public void onClickNewAgreement() {
+        Intent intent = new Intent(this, newAgreementActivity.class);
+        startActivity(intent);
+    }
+
+    public void onClickNewAddendum() {
+        Intent intent = new Intent(this, newAddendumActivity.class);
+        startActivity(intent);
+    }
+
     // AgreementItem class with title and list of Addendum objects
     public class AgreementItem {
 
