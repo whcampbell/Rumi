@@ -12,4 +12,17 @@
         android:layout_height="wrap_content"
         android:text="agreement"
         android:layout_gravity="center"/>
+
+    <ListView
+        android:id="@+id/agreementsListView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="595dp"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Agreement"
+        android:onClick="startCreateAgreementItem" />
 </FrameLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/addendumBody"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:gravity="center_vertical"
+        android:hint="Enter addendum here..." />
+
+    <TextView
+        android:id="@+id/addendumSigner"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:text="Signer" />
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:onClick="onCancel" />
+
+    <Button
+        android:id="@+id/doneButton"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:onClick="onDone" />
+</LinearLayout>
