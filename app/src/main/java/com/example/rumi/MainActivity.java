@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.FirebaseFirestore;
 //import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
     private NavigationBarView bottomNavigationView;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new agreements();
                     break;
                 case R.id.payments:
-                    fragment = new payments();
+                    fragment = new payments(db);
                     break;
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
