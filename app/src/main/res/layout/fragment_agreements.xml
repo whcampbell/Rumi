@@ -14,18 +14,20 @@
         android:layout_marginBottom="36dp"
         android:ems="10"
         android:text="Agreements"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/listView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/listView"
         android:layout_width="wrap_content"
-        android:layout_height="39dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="120dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="108dp"
         android:text="LIST OF AGREEMENTS HERE"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,21 +37,22 @@
         android:id="@+id/newAgreementButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="208dp"
-        android:layout_marginEnd="40dp"
-        android:onClick="onClickNewAgreement"
+        android:layout_marginTop="264dp"
+        android:height="48dp"
         android:text="New Agreement"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/newAddendumButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="208dp"
-        android:onClick="onClickNewAddendum"
+        android:layout_marginTop="340dp"
+        android:height="48dp"
         android:text="New Addendum"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

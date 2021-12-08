@@ -13,7 +13,7 @@ public class newAddendumActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.new_agreement);
+        setContentView(R.layout.new_addendum);
 
     }
 

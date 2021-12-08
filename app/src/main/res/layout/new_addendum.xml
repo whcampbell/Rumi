@@ -25,8 +25,8 @@
         android:id="@+id/textViewBody"
         android:layout_width="100dp"
         android:layout_height="39dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="120dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="128dp"
         android:text="Addendum:"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,14 +34,13 @@
 
     <EditText
         android:id="@+id/editTextBody"
-        android:layout_width="188dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="572dp"
-        android:ems="10"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="263dp"
+        android:layout_height="42dp"
+        android:hint="Addendum content"
+        android:minHeight="48dp"
+        app:layout_constraintLeft_toRightOf="@id/textViewBody"
         app:layout_constraintStart_toEndOf="@+id/textViewBody"
-        app:layout_constraintTop_toBottomOf="@+id/topText" />
+        app:layout_constraintTop_toTopOf="@+id/textViewBody" />
 
     <TextView
         android:id="@+id/textViewSigner"
@@ -59,8 +58,9 @@
         android:layout_width="185dp"
         android:layout_height="47dp"
         android:layout_marginStart="28dp"
-        android:layout_marginBottom="572dp"
         android:ems="10"
+        android:hint="Signer"
+        app:layout_constraintLeft_toRightOf="@id/textViewSigner"
         app:layout_constraintStart_toEndOf="@+id/textViewSigner"
         app:layout_constraintTop_toTopOf="@+id/textViewSigner" />
 
@@ -68,21 +68,23 @@
         android:id="@+id/createButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="312dp"
-        android:layout_marginEnd="48dp"
+        android:layout_marginTop="396dp"
         android:onClick="onClickCreate"
         android:text="Create Agreement"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/cancelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="312dp"
+        android:layout_marginTop="324dp"
         android:onClick="onClickCancel"
         android:text="Cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
