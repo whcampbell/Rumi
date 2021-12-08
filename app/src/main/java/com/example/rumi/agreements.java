@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -29,18 +30,28 @@ public class agreements extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_agreements, container, false);
+        View view = inflater.inflate(R.layout.fragment_agreements, container, false);
+        Button newAgreementButton = view.findViewById(R.id.newAgreementButton);
+        Button newAddendumButton = view.findViewById(R.id.newAddendumButton);
+
+        newAgreementButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), newAgreementActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        newAddendumButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), newAddendumActivity.class);
+                startActivity(intent);
+            }
+        });
+
         // TODO: populate list with Agreement objects using info from DB
-    }
-
-    public void onClickNewAgreement() {
-        Intent intent = new Intent(this, newAgreementActivity.class);
-        startActivity(intent);
-    }
-
-    public void onClickNewAddendum() {
-        Intent intent = new Intent(this, newAddendumActivity.class);
-        startActivity(intent);
+        return view;
     }
 
     // AgreementItem class with title and list of Addendum objects
