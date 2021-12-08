@@ -34,12 +34,12 @@ public class agreements extends Fragment {
     }
 
     public void onClickNewAgreement() {
-        Intent intent = new Intent(this, newAgreementActivity.class);
+        Intent intent = new Intent(this.getActivity(), newAgreementActivity.class);
         startActivity(intent);
     }
 
     public void onClickNewAddendum() {
-        Intent intent = new Intent(this, newAddendumActivity.class);
+        Intent intent = new Intent(this.getActivity(), newAddendumActivity.class);
         startActivity(intent);
     }
 

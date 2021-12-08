@@ -10,11 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Rumi">
         <activity
+            android:name=".newPaymentActivity"
+            android:exported="true" />
+        <activity
             android:name=".newEventActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

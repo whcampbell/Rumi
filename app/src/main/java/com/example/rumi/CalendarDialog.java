@@ -21,6 +21,10 @@ public class CalendarDialog extends AppCompatDialogFragment {
         this.date = date;
     }
 
+    public CalendarDialog() {
+
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
