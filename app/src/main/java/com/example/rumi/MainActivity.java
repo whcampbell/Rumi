@@ -1,5 +1,7 @@
 package com.example.rumi;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -8,9 +10,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,11 +24,15 @@ public class MainActivity extends AppCompatActivity {
     private NavigationBarView bottomNavigationView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private SharedPreferences sp;
+    public String houseNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //FirebaseFirestore db = FirebaseFirestore.getInstance();
         sp = getSharedPreferences("com.uw.rumi", Context.MODE_PRIVATE);
+        Intent intent = getIntent();
+       // houseNumber = intent.getStringExtra("housenum");
+       // Log.e(TAG, houseNumber);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -72,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new agreements();
                     break;
                 case R.id.payments:
-                    fragment = new payments(db);
+                    fragment = new payments();
                     break;
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
@@ -92,4 +100,5 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, LoginActivity.class));
 
     }
+
 }

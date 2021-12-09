@@ -42,15 +42,11 @@ public class payments extends Fragment {
     private View view;
     private float retamount=0;
     private Button addPaymentButton;
-    private FirebaseFirestore db;
     private int RequestCode = 1;
     private ListView unpaidList;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-    public payments(FirebaseFirestore db) {
-        this.db = db;
-        // Required empty public constructor
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,7 +70,7 @@ public class payments extends Fragment {
                             ArrayList<QueryDocumentSnapshot> unpaidId = new ArrayList<QueryDocumentSnapshot>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.e(TAG, document.getId() + " => " + document.getData());
-                                if(document.getData().get("paid").equals("false")){
+                                if(document != null && document.getData().get("paid").equals("false")){
                                     unpaid.add(String.format("amount:%s", document.getData().get("amount")));
                                     unpaidId.add(document);
                                 }
