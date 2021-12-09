@@ -10,7 +10,6 @@ import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.FirebaseFirestore;
-//import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
     private NavigationBarView bottomNavigationView;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new calendar();
                     break;
                 case R.id.agreements:
-                    fragment = new agreements();
+                    fragment = new agreements(db);
                     break;
                 case R.id.payments:
                     fragment = new payments(db);
