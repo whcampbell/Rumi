@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -11,10 +12,22 @@ import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
+    SharedPreferences sp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+
+        sp = getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
+
+        if (sp.getString("username", "").equals("")) {
+            setContentView(R.layout.activity_login);
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
     }
 
     public void onClickLogin(View view) {
@@ -44,13 +57,22 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+
+        sp.edit().putString("username", user).apply();
+
         // TODO pull database info from matching username
         // check that passwords match
+        // set intent to load correct household
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
 
+    }
+
+    public void onClickNewAcct(View view) {
+        Intent intent = new Intent(this, NewAccountActivity.class);
+        startActivity(intent);
     }
 
 }
