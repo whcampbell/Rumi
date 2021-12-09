@@ -16,8 +16,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,6 +29,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,10 +65,16 @@ public class payments extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            ArrayList<String> unpaid = new ArrayList<String>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.e(TAG, document.getId() + " => " + document.getData());
-                                middle.setText((String)document.getData().get("amount"));
+                                if(document.getData().get("paid").equals("false")){
+                                    unpaid.add(String.format("amount:%s", document.getData().get("amount")));
+                                }
                             }
+                            ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, unpaid);
+                            ListView listView = (ListView) view.findViewById(R.id.notesListView);
+                            listView.setAdapter(adapter);
                         } else {
                             Log.e(TAG, "Error getting documents.", task.getException());
                         }
@@ -97,14 +106,42 @@ public class payments extends Fragment {
             Serializable s = data.getExtras().getSerializable("amount");
             String amount = s.toString();
 
+            s = data.getExtras().getSerializable("paid");
+            String paid = s.toString();
+
+            s = data.getExtras().getSerializable("duedate");
+            String dueDate = s.toString();
+
+           // s = data.getExtras().getSerializable("payer");
+            //String payer = s.toString();
+
 
             Map<String, Object> payment = new HashMap<String, Object>();
             payment.put("amount", amount);
+            payment.put("paid", paid);
+            payment.put("duedate", dueDate);
+            //payment.put("payer", payer);
 
             //add any values you want into the Map
 
             db.collection("payment").add(payment);
         }
 
+    }
+    //output.putExtra("paid", false);
+    //        output.putExtra("dudate", dueDate);
+    //        output.putExtra("payer", userToPay);
+    //        output.putExtra("reocurring", reocurring);
+    //        output.putExtra("reocurancefreq", freq);
+    public class payment {
+        float amount;
+        String duedate;
+        String payer;
+        Boolean reoccurring;
+        String reoccurFreq;
+        public payment (float amount, String duedate, String payer, Boolean reoccurring, String reoccurFreq){
+            this.amount = amount;
+
+        }
     }
 }
