@@ -27,7 +27,6 @@
             android:name=".MainActivity"
             android:exported="true"/>
         <activity android:name=".newAgreementActivity" />
-        <activity android:name=".newAddendumActivity" />
     </application>
 
 </manifest>

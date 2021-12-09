@@ -20,6 +20,7 @@ public class newAgreementActivity extends AppCompatActivity {
     public void onClickCreate(View view) {
         String title = ((EditText)findViewById(R.id.editTextTitle)).getText().toString();
 
+
         // TODO: add to database
 
         finish();

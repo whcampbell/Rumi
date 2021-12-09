@@ -32,20 +32,11 @@ public class agreements extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_agreements, container, false);
         Button newAgreementButton = view.findViewById(R.id.newAgreementButton);
-        Button newAddendumButton = view.findViewById(R.id.newAddendumButton);
 
         newAgreementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), newAgreementActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        newAddendumButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), newAddendumActivity.class);
                 startActivity(intent);
             }
         });
@@ -58,28 +49,17 @@ public class agreements extends Fragment {
     public class AgreementItem {
 
         private String title;
-        private List<Addendum> addendumList;
-
-        public AgreementItem(String newTitle) {
-            this.title = newTitle;
-            addendumList = new ArrayList<>();
-        }
-
-        public void addItem (agreements.Addendum item){
-            addendumList.add(item);
-        }
-    }
-
-    // Addendum class with 2 fields: body of agreement and signer
-    public class Addendum {
-
         private String body;
-        private String signer;  // TODO: could add multiple signer functionality
 
-        public Addendum(String content, String user) {
-            this.body = content;
-            this.signer = user;
+        public AgreementItem(String newTitle, String newBody) {
+            this.title = newTitle;
+            this.body = newBody;
+        }
+
+        public void editBody(String newBody) {
+            this.body = newBody;
         }
 
     }
+
 }
