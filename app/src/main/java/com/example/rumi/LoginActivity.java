@@ -1,11 +1,14 @@
 package com.example.rumi;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -13,14 +16,15 @@ import android.widget.Toast;
 public class LoginActivity extends AppCompatActivity {
 
     SharedPreferences sp;
+    public static String usernameKey = "username";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sp = getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
+        sp = getSharedPreferences("com.uw.rumi", Context.MODE_PRIVATE);
 
-        if (sp.getString("username", "").equals("")) {
+        if (sp.getString(usernameKey, "").equals("")) {
             setContentView(R.layout.activity_login);
         } else {
             Intent intent = new Intent(this, MainActivity.class);
@@ -58,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 
-        sp.edit().putString("username", user).apply();
+        sp.edit().putString(usernameKey, user).apply();
 
         // TODO pull database info from matching username
         // check that passwords match

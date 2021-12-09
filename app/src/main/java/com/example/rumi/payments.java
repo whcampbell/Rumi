@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 
 import android.os.Parcelable;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -41,6 +44,7 @@ public class payments extends Fragment {
     private Button addPaymentButton;
     private FirebaseFirestore db;
     private int RequestCode = 1;
+    private ListView unpaidList;
 
 
     public payments(FirebaseFirestore db) {
@@ -56,6 +60,7 @@ public class payments extends Fragment {
         view = inflater.inflate(R.layout.fragment_payments, container, false);
         TextView middle = view.findViewById(R.id.middle);
         addPaymentButton = view.findViewById(R.id.addPaymentButton);
+        unpaidList = view.findViewById(R.id.unpaidList);
 
 
 
@@ -66,15 +71,29 @@ public class payments extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             ArrayList<String> unpaid = new ArrayList<String>();
+                            ArrayList<QueryDocumentSnapshot> unpaidId = new ArrayList<QueryDocumentSnapshot>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.e(TAG, document.getId() + " => " + document.getData());
                                 if(document.getData().get("paid").equals("false")){
                                     unpaid.add(String.format("amount:%s", document.getData().get("amount")));
+                                    unpaidId.add(document);
                                 }
                             }
-                            ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, unpaid);
-                            ListView listView = (ListView) view.findViewById(R.id.notesListView);
-                            listView.setAdapter(adapter);
+                            ArrayAdapter adapterString = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, unpaid);
+                            unpaidList.setTag(unpaidId);
+                            unpaidList.setAdapter(adapterString);
+                            unpaidList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+                                    Map<String, Object> payment = new HashMap<String, Object>();
+                                    payment.put("paid", "true");
+                                    ArrayList<QueryDocumentSnapshot> list =  (ArrayList<QueryDocumentSnapshot>) unpaidList.getTag();
+                                    QueryDocumentSnapshot document = list.get(position);
+                                    String docId = document.getId();
+                                    db.collection("payment").document(docId).update(payment);
+                                    refresh();
+                                }
+                            });
                         } else {
                             Log.e(TAG, "Error getting documents.", task.getException());
                         }
@@ -97,6 +116,7 @@ public class payments extends Fragment {
 
 
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -143,5 +163,8 @@ public class payments extends Fragment {
             this.amount = amount;
 
         }
+    }
+    public void refresh(){
+
     }
 }

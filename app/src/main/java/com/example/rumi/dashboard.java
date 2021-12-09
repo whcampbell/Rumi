@@ -22,4 +22,5 @@ public class dashboard extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
+
 }
