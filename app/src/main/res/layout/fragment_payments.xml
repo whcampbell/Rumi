@@ -20,16 +20,61 @@
 
     <ListView
         android:id="@+id/unpaidList"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="1dp"
+        android:layout_width="343dp"
+        android:layout_height="164dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addPaymentButton" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.241" />
 
+    <ListView
+        android:id="@+id/paidList"
+        android:layout_width="343dp"
+        android:layout_height="164dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.544"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/unpaidList" />
 
+    <TextView
+        android:id="@+id/paid"
+        android:layout_width="156dp"
+        android:layout_height="43dp"
+        android:text="Paid"
+        android:textSize="22dp"
+        app:layout_constraintBottom_toTopOf="@+id/paidList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.172"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/unpaidList"
+        app:layout_constraintVertical_bias="1.0" />
 
+    <TextView
+        android:id="@+id/pending"
+        android:layout_width="156dp"
+        android:layout_height="43dp"
+        android:text="Pending"
+        android:textSize="22dp"
+        app:layout_constraintBottom_toTopOf="@+id/unpaidList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.145"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="156dp"
+        android:layout_height="43dp"
+        android:text="Payments"
+        android:textSize="33dp"
+        app:layout_constraintBottom_toTopOf="@+id/unpaidList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.287" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

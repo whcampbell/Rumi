@@ -27,7 +27,7 @@ public class dashboard extends Fragment {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         TextView houseTextView = view.findViewById(R.id.houseNumber);
 
-        //houseTextView.setText();
+        //houseTextView.setText(MainActivity.houseNumber);
 
 
         return view;

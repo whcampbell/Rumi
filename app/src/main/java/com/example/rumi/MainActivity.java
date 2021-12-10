@@ -28,11 +28,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         sp = getSharedPreferences("com.uw.rumi", Context.MODE_PRIVATE);
         Intent intent = getIntent();
        // houseNumber = intent.getStringExtra("housenum");
-       // Log.e(TAG, houseNumber);
+       //Log.e(TAG, houseNumber);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

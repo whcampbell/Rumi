@@ -82,6 +82,7 @@ public class NewAccountActivity extends AppCompatActivity {
                             });
             db.collection("user").document(user).set(userMap);
             Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("housenum", id);
             startActivity(intent);
         }
 

@@ -26,6 +26,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wallet.PaymentsClient;
+import com.google.android.gms.wallet.Wallet;
+import com.google.android.gms.wallet.WalletConstants;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -44,7 +47,9 @@ public class payments extends Fragment {
     private Button addPaymentButton;
     private int RequestCode = 1;
     private ListView unpaidList;
+    private ListView paidList;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private PaymentsClient paymentsClient;
 
 
 
@@ -57,6 +62,10 @@ public class payments extends Fragment {
         TextView middle = view.findViewById(R.id.middle);
         addPaymentButton = view.findViewById(R.id.addPaymentButton);
         unpaidList = view.findViewById(R.id.unpaidList);
+        paidList = view.findViewById(R.id.paidList);
+
+
+
 
 
 
@@ -67,12 +76,17 @@ public class payments extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             ArrayList<String> unpaid = new ArrayList<String>();
+                            ArrayList<String> paid = new ArrayList<String>();
                             ArrayList<QueryDocumentSnapshot> unpaidId = new ArrayList<QueryDocumentSnapshot>();
+                            ArrayList<QueryDocumentSnapshot> paidId = new ArrayList<QueryDocumentSnapshot>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.e(TAG, document.getId() + " => " + document.getData());
                                 if(document != null && document.getData().get("paid").equals("false")){
-                                    unpaid.add(String.format("amount:%s", document.getData().get("amount")));
+                                    unpaid.add(String.format("Owe amount: %s", document.getData().get("amount")));
                                     unpaidId.add(document);
+                                }else{
+                                    paid.add(String.format("Paid amount: %s", document.getData().get("amount")));
+                                    paidId.add(document);
                                 }
                             }
                             ArrayAdapter adapterString = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, unpaid);
@@ -84,6 +98,22 @@ public class payments extends Fragment {
                                     Map<String, Object> payment = new HashMap<String, Object>();
                                     payment.put("paid", "true");
                                     ArrayList<QueryDocumentSnapshot> list =  (ArrayList<QueryDocumentSnapshot>) unpaidList.getTag();
+                                    QueryDocumentSnapshot document = list.get(position);
+                                    String docId = document.getId();
+                                    db.collection("payment").document(docId).update(payment);
+                                    refresh();
+                                }
+                            });
+                            adapterString = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, paid);
+                            paidList.setTag(paidId);
+                            paidList.setAdapter(adapterString);
+                            paidList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+                                    Map<String, Object> payment = new HashMap<String, Object>();
+                                    payment.put("paid", "false");
+
+                                    ArrayList<QueryDocumentSnapshot> list =  (ArrayList<QueryDocumentSnapshot>) paidList.getTag();
                                     QueryDocumentSnapshot document = list.get(position);
                                     String docId = document.getId();
                                     db.collection("payment").document(docId).update(payment);
