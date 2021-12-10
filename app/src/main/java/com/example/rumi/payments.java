@@ -26,9 +26,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.wallet.PaymentsClient;
-import com.google.android.gms.wallet.Wallet;
-import com.google.android.gms.wallet.WalletConstants;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -49,7 +46,7 @@ public class payments extends Fragment {
     private ListView unpaidList;
     private ListView paidList;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private PaymentsClient paymentsClient;
+
 
 
 
