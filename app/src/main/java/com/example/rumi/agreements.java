@@ -16,23 +16,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 public class agreements extends Fragment {
 
@@ -62,7 +59,7 @@ public class agreements extends Fragment {
         });
 
         // populate list with Agreement objects using info from DB
-        simpleAdapterListView();
+        populateListView();
 
         return view;
     }
@@ -71,51 +68,56 @@ public class agreements extends Fragment {
     public void onResume() {
         super.onResume();
         // populate list with Agreement objects using info from DB
-        simpleAdapterListView();
+        populateListView();
     }
 
     // This method use SimpleAdapter to show data in ListView.
-    private void simpleAdapterListView() {
+    private void populateListView() {
+
+        // traverse db to this house's agreements TODO: no hardcoding for house, get from SP instead
+        CollectionReference agreementsRef = db.collection("Houses").document("testHouse")
+                .collection("agreements");
 
         // fill agreementList using db
-        ArrayList<String> titleArr = new ArrayList<>();
-        ArrayList<String> bodyArr = new ArrayList<>();
+        ArrayList<String> agreementsArr = new ArrayList<String>();
+        ArrayList<String> titleArr = new ArrayList<String>();
+        ArrayList<String> bodyArr = new ArrayList<String>();
 
-        db.collection("agreement")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, agreementsArr);
+        LayoutInflater inflater = getLayoutInflater();
+        ListView lv = inflater.inflate(R.layout.events_dialog, null).findViewById(R.id.list);
+        lv.setAdapter(adapter);
+
+        agreementsRef.get()
+                .addOnCompleteListener(new OnCompleteListener() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.e(TAG, document.getId() + " => " + document.getData());
-                                titleArr.add((String)document.getData().get("title"));
-                                bodyArr.add((String)document.getData().get("body"));
+                            DocumentSnapshot doc = (DocumentSnapshot) task.getResult();
+                            if (doc.exists()) {
+                                Map<String, Object> map = doc.getData();
+                                int i = 1;
+                                String agreementLine = "";
+                                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                                    agreementLine += entry.getValue() + "\n";
+                                    if (i % 2 == 0) {
+                                        agreementsArr.add(agreementLine);
+                                        agreementLine = "";
+                                    }
+                                    ++i;
+                                }
+                                agreementsArr.add(agreementLine);
+                                adapter.notifyDataSetChanged();
+                            } else {
+                                Log.e("Err", "No such document");
                             }
                         } else {
-                            Log.e(TAG, "Error getting documents.", task.getException());
+                            Log.e(TAG, "Error getting documents, ", task.getException());
                         }
                     }
                 });
 
-        // building agreementList to get ready for listView
-        ArrayList<Map<String,Object>> agreementList = new ArrayList<Map<String,Object>>();;
-
-        int titleLen = titleArr.size();
-        for(int i =0; i < titleLen; i++) {
-            Map<String,Object> listItemMap = new HashMap<String,Object>();
-            listItemMap.put("title", titleArr.get(i));
-            listItemMap.put("body", bodyArr.get(i));
-            agreementList.add(listItemMap);
-        }
-
-        SimpleAdapter simpleAdapter = new SimpleAdapter(getContext(),agreementList,android.R.layout.simple_list_item_2,
-                new String[]{"title","body"},new int[]{android.R.id.text1,android.R.id.text2});
-
-        ListView listView = (ListView)view.findViewById(R.id.listView);
-        listView.setAdapter(simpleAdapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
                 Object clickItemObj = adapterView.getAdapter().getItem(index);
