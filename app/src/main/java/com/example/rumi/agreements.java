@@ -30,6 +30,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class agreements extends Fragment {
 
@@ -80,8 +82,6 @@ public class agreements extends Fragment {
 
         // fill agreementList using db
         ArrayList<String> agreementsArr = new ArrayList<String>();
-        ArrayList<String> titleArr = new ArrayList<String>();
-        ArrayList<String> bodyArr = new ArrayList<String>();
 
         ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, agreementsArr);
         LayoutInflater inflater = getLayoutInflater();
@@ -93,23 +93,25 @@ public class agreements extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
-                            DocumentSnapshot doc = (DocumentSnapshot) task.getResult();
-                            if (doc.exists()) {
-                                Map<String, Object> map = doc.getData();
-                                int i = 1;
-                                String agreementLine = "";
-                                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                                    agreementLine += entry.getValue() + "\n";
-                                    if (i % 2 == 0) {
-                                        agreementsArr.add(agreementLine);
-                                        agreementLine = "";
+                            QuerySnapshot queryDocs = (QuerySnapshot) task.getResult();
+                            for (QueryDocumentSnapshot doc : queryDocs) {
+                                if (doc.exists()) {
+                                    Map<String, Object> map = doc.getData();
+                                    int i = 1;
+                                    String agreementLine = "";
+                                    for (Map.Entry<String, Object> entry : map.entrySet()) {
+                                        agreementLine += entry.getValue() + "\n";
+                                        if (i % 2 == 0) {
+                                            agreementsArr.add(agreementLine);
+                                            agreementLine = "";
+                                        }
+                                        ++i;
                                     }
-                                    ++i;
+                                    agreementsArr.add(agreementLine);
+                                    adapter.notifyDataSetChanged();
+                                } else {
+                                    Log.e("Err", "No such document");
                                 }
-                                agreementsArr.add(agreementLine);
-                                adapter.notifyDataSetChanged();
-                            } else {
-                                Log.e("Err", "No such document");
                             }
                         } else {
                             Log.e(TAG, "Error getting documents, ", task.getException());
@@ -121,6 +123,13 @@ public class agreements extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
                 Object clickItemObj = adapterView.getAdapter().getItem(index);
+                // TODO: send to edit note activity
+                // need to make new activity.java and activity.xml
+                // copy new_agreement.xml and change to "edit agreement"
+                // EditTexts should show current title/body
+                // cancel is the same
+                // done should update db rather than add to it
+                // delete below line
                 Toast.makeText(getContext(), "You clicked " + clickItemObj.toString(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -131,19 +140,23 @@ public class agreements extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data){
 
         if (requestCode == RequestCode && resultCode == RESULT_OK && data != null) {
-            //get the variables from the New Agreement Activity
+            // get the variables from the New Agreement Activity
             Serializable t = data.getExtras().getSerializable("title");
             String title = t.toString();
 
             Serializable b = data.getExtras().getSerializable("body");
             String body = b.toString();
 
-            //add values into the Map
+            // add values into the Map
             Map<String, Object> agreement = new HashMap<String, Object>();
             agreement.put("title", title);
             agreement.put("body", body);
 
-            db.collection("agreement").add(agreement);
+            // traverse db to this house's agreements TODO: no hardcoding for house, get from SP instead
+            CollectionReference agreementsRef = db.collection("Houses").document("testHouse")
+                    .collection("agreements");
+
+            agreementsRef.add(agreement); // TODO: how to edit doc not just add new doc
         }
 
     }
