@@ -1,15 +1,20 @@
 package com.example.rumi;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -49,22 +54,41 @@ public class newEventActivity extends AppCompatActivity {
         String location = ((EditText)findViewById(R.id.eTextLocation)).getText().toString();
         String date = ((EditText)findViewById(R.id.editTextDate)).getText().toString();
         String time = ((EditText)findViewById(R.id.editTextTime)).getText().toString();
-        if (pm) {
-            time = time + "pm";
-        } else {
-            time = time + "am";
-        }
 
         Map<String, Object> info = new HashMap<>();
-        info.put("name", name);
-        info.put("location", location);
-        info.put("date", date);
-        info.put("time", time);
 
-        DocumentReference dr = dBase.collection("Houses").document("testHouse")
+        SharedPreferences sp = getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
+        String houseName = sp.getString("houseName", "");
+
+        DocumentReference dr = dBase.collection("Houses").document(houseName)
                 .collection("events").document(date);
-        dr.set(info);
-        Log.i("info", "sending date to database as " + date);
+
+        dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc.exists()) {
+                        Map<String, Object> map = doc.getData();
+                        int count = map.size();
+                        info.putAll(map);
+                        if (pm) {
+                            info.put("event" + (count + 1), "Name: " + name + "\nLocation: " + location + "\nTime: " + time + "pm");
+                        } else {
+                            info.put("event" + (count + 1), "Name: " + name + "\nLocation: " + location + "\nTime: " + time + "am");
+                        }
+                        dr.update(info);
+                    } else {
+                        if (pm) {
+                            info.put("event1", "Name: " + name + "\nLocation: " + location + "\nTime: " + time + "pm");
+                        } else {
+                            info.put("event1", "Name: " + name + "\nLocation: " + location + "\nTime: " + time + "am");
+                        }
+                        dr.set(info);
+                    }
+                }
+            }
+        });
 
         finish();
     }

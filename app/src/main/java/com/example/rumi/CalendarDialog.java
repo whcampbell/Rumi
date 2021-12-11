@@ -4,8 +4,10 @@ import static android.content.ContentValues.TAG;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -45,8 +47,6 @@ public class CalendarDialog extends AppCompatDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         ArrayList<String> testEvents = new ArrayList<>();
-
-
         ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, testEvents);
 
         LayoutInflater inflater = getLayoutInflater();
@@ -55,7 +55,24 @@ public class CalendarDialog extends AppCompatDialogFragment {
 
         lv.setAdapter(adapter);
 
-        DocumentReference eventsRef = dBase.collection("Houses").document("testHouse")
+        // Database pull for events
+        SharedPreferences sp = getActivity().getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
+        String houseName = sp.getString("houseName", "");
+
+        if (houseName.equals("")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(date)
+                    .setTitle("No events - house name not found")
+                    .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+            return builder.create();
+        }
+
+        DocumentReference eventsRef = dBase.collection("Houses").document(houseName)
                 .collection("events").document(date);
 
         eventsRef.get()
@@ -66,21 +83,17 @@ public class CalendarDialog extends AppCompatDialogFragment {
                             DocumentSnapshot doc = task.getResult();
                             if (doc.exists()) {
                                 Map<String, Object> map = doc.getData();
-                                int i = 1;
-                                String eventLine = "";
                                 for (Map.Entry<String, Object> entry : map.entrySet()) {
-
-                                    eventLine += entry.getValue() + "\n";
-                                    if (i % 3 == 0) {
-                                        testEvents.add(eventLine);
-                                        eventLine = "";
-                                    }
-                                    ++i;
+                                    testEvents.add(entry.getValue().toString());
                                 }
-                                testEvents.add(eventLine);
+                                if (testEvents.size() == 0) {
+                                    testEvents.add("No events today");
+                                }
                                 adapter.notifyDataSetChanged();
                             } else {
                                 Log.e("Err", "No such document");
+                                testEvents.add("No events today");
+                                adapter.notifyDataSetChanged();
                             }
                         } else {
                             Log.e(TAG, "Error getting documents, ", task.getException());
