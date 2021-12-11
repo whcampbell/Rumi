@@ -14,10 +14,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -28,7 +33,7 @@ public class NewAccountActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        sp = getSharedPreferences("com.uw.rumi", Context.MODE_PRIVATE);
+        sp = getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_account);
     }
@@ -44,54 +49,46 @@ public class NewAccountActivity extends AppCompatActivity {
         String id;
 
         Context context = getApplicationContext();
-        String badInput = "Please provide all information";
+        String badInput = "Please provide all correct information";
+        String usernameTaken = "Username is taken, please try another";
+        String badHouse = "This house does not exist";
         int duration = Toast.LENGTH_SHORT;
 
-        Toast toast = Toast.makeText(context, badInput, duration);
+        Toast toastInfo = Toast.makeText(context, badInput, duration);
+        Toast toastHouse = Toast.makeText(context, badHouse, duration);
+        Toast toastUsername = Toast.makeText(context, usernameTaken, duration);
 
         if (user == null || user.length() == 0) {
-            toast.show();
+            toastInfo.show();
             editUser.setText("");
             editPass.setText("");
             return;
         }else if (pass == null || pass.length() == 0) {
-            toast.show();
+            toastInfo.show();
             editUser.setText("");
             editPass.setText("");
             return;
         }
         if (!number.equals("")) {
             id = number;
+
         }else {
             Random rand = new Random();
             id = String.format("%04d", rand.nextInt(10000));
-            Log.e(TAG, "here");
         }
 
             Map<String, Object> houseMap = new HashMap<String, Object>();
             houseMap.put("houseName", user + "'s House");
-
+            db.collection("Houses").document(id).set(houseMap);
 
             Map<String, Object> userMap = new HashMap<String, Object>();
             userMap.put(LoginActivity.usernameKey, user);
             userMap.put("pass", pass);
             userMap.put("housenum", id);
             sp.edit().putString(LoginActivity.usernameKey, user).apply();
+            sp.edit().putString(LoginActivity.houseNumKey, id).apply();
 
-            db.collection("Houses").document(id).collection("user").document(user)
-                    .set(userMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.e(TAG, "DocumentSnapshot successfully written!");
-                        }
-                    })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e(TAG, "Error writing document", e);
-                                }
-                            });
+            db.collection("Houses").document(id).collection("user").document(user).set(userMap);
             db.collection("user").document(user).set(userMap);
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("housenum", id);
@@ -99,5 +96,6 @@ public class NewAccountActivity extends AppCompatActivity {
 
 
     }
+
 
 }

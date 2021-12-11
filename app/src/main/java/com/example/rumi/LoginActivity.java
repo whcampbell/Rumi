@@ -37,9 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences sp;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     public static String usernameKey = "username";
-    public final String houseNumKey = "housenum";
+    public static String houseNumKey = "housenum";
     String user;
-    String getHouseNumber;
     Map<String, String[]> userPass = new HashMap<String, String[]>();
     public String houseNumber;
     @Override
@@ -57,7 +56,6 @@ public class LoginActivity extends AppCompatActivity {
             user = sp.getString(usernameKey, "");
             houseNumber = sp.getString(houseNumKey, "");
 
-            Log.e(TAG, user);
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("housenum", houseNumber);
             startActivity(intent);
@@ -149,53 +147,8 @@ public class LoginActivity extends AppCompatActivity {
 
         return returnval;
     }
-    public MutableLiveData<String> getHouseNum (String user){
-
-        DocumentReference docRef = db.collection("user").document(user);
-        MutableLiveData<String> houseNumberLiveData = new MutableLiveData<String>();
 
 
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        String houseNumber = (String) document.getData().get(houseNumKey);
-                        houseNumberLiveData.setValue(houseNumber);
-
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-
-        });
-
-        return houseNumberLiveData;
-    }
-
-    private void readData(FirestoreCallBack firestoreCallBack){
-
-        db.collection(usernameKey).document(user).get().addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
-                DocumentSnapshot document = task.getResult();
-                houseNumber = document.getString(houseNumKey);
-
-                firestoreCallBack.onCallback(houseNumber);
-            }else{
-
-            }
-        });
-
-    }
-    private interface FirestoreCallBack{
-        void onCallback(String str);
-    }
 
 
 }
