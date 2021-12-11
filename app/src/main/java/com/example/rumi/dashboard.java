@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,8 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 
 public class dashboard extends Fragment {
+    private ArrayList<DashConvo> convoList;
+    private RecyclerView reView;
 
 
     public dashboard() {
@@ -30,9 +37,31 @@ public class dashboard extends Fragment {
 
         houseTextView.setText("House #" + MainActivity.houseNumber);
 
+        reView = view.findViewById(R.id.Recycler);
 
+
+
+        convoList = new ArrayList<>();
+        convoList.add(new DashConvo("once upon a midnight dreary while I pondered weak and weary\n" +
+                "over many a quaint and curious volume of forgotten lore\n" +
+                "while I nodded nearly napping suddenly there came a tapping", "this is a comment"));
+        convoList.add(new DashConvo("head2", "this is another"));
+        convoList.add(new DashConvo("head3", "and this is a third"));
+        convoList.add(new DashConvo("how bout we add another head that's on the longer end of things", "and then the comment won't be too long"));
+        convoList.add(new DashConvo("head5", "commememembklt"));
+        convoList.add(new DashConvo("heeed6", "the fitnessgram pacer test is a multistage aerobic fitness examination"));
+
+        setAdapter();
 
         return view;
+    }
+
+    private void setAdapter() {
+        RecyclerAdapter adapter = new RecyclerAdapter(convoList);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        reView.setLayoutManager(layoutManager);
+        reView.setItemAnimator(new DefaultItemAnimator());
+        reView.setAdapter(adapter);
     }
 
 }
