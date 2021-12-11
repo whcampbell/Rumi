@@ -67,6 +67,13 @@ public class agreements extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // populate list with Agreement objects using info from DB
+        simpleAdapterListView();
+    }
+
     // This method use SimpleAdapter to show data in ListView.
     private void simpleAdapterListView() {
 
@@ -84,7 +91,6 @@ public class agreements extends Fragment {
                                 Log.e(TAG, document.getId() + " => " + document.getData());
                                 titleArr.add((String)document.getData().get("title"));
                                 bodyArr.add((String)document.getData().get("body"));
-
                             }
                         } else {
                             Log.e(TAG, "Error getting documents.", task.getException());
@@ -92,6 +98,7 @@ public class agreements extends Fragment {
                     }
                 });
 
+        // building agreementList to get ready for listView
         ArrayList<Map<String,Object>> agreementList = new ArrayList<Map<String,Object>>();;
 
         int titleLen = titleArr.size();
