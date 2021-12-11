@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 import com.google.android.material.navigation.NavigationBarView;
@@ -29,7 +30,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        sp = getSharedPreferences("com.uw.rumi", Context.MODE_PRIVATE);
+        sp = getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
+        // house name will be set either in "new account activity" or "dashboard activity."
+        // it is possible that no house is set on login, so <username>'s house will be created
+        // as a default.
+
+        String houseName = sp.getString("houseName", "");
+        if (houseName.equals("")) {
+            // no house currently in shared preferences. need to go to default
+
+            // HARD CODE FOR TESTING
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("houseName", "testHouse").apply();
+            // HARD CODE FOR TESTING
+            Log.i("info", "Setting houseName");
+
+            //TODO database call create or load default house "<username>'s house"
+        } else {
+            Log.i("info", "House name in SP is " + houseName);
+        }
+
+        Log.i("info", "after set(?), housename is " + sp.getString("houseName", "err"));
+
+        Context context = getApplicationContext();
+        String welcome = "Welcome home!";
+        int duration = Toast.LENGTH_LONG;
+        Toast toast = Toast.makeText(context, welcome, duration);
+        toast.show();
+
+
+
         Intent intent = getIntent();
        // houseNumber = intent.getStringExtra("housenum");
        //Log.e(TAG, houseNumber);
