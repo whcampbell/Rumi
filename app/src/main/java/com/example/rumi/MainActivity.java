@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private NavigationBarView bottomNavigationView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private SharedPreferences sp;
-    public String houseNumber;
+    public static String houseNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-       // houseNumber = intent.getStringExtra("housenum");
+        houseNumber = intent.getStringExtra("housenum");
        //Log.e(TAG, houseNumber);
 
         super.onCreate(savedInstanceState);
