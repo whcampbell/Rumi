@@ -60,12 +60,18 @@ public class NewAccountActivity extends AppCompatActivity {
             editPass.setText("");
             return;
         }
-        if (number != null || !number.equals("")) {
+        if (!number.equals("")) {
             id = number;
         }else {
             Random rand = new Random();
             id = String.format("%04d", rand.nextInt(10000));
+            Log.e(TAG, "here");
         }
+
+            Map<String, Object> houseMap = new HashMap<String, Object>();
+            houseMap.put("houseName", user + "'s House");
+
+
             Map<String, Object> userMap = new HashMap<String, Object>();
             userMap.put(LoginActivity.usernameKey, user);
             userMap.put("pass", pass);
