@@ -9,13 +9,21 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class newEventActivity extends AppCompatActivity {
     boolean pm = true;
+    FirebaseFirestore dBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_event);
+        dBase = FirebaseFirestore.getInstance();
 
     }
 
@@ -47,8 +55,16 @@ public class newEventActivity extends AppCompatActivity {
             time = time + "am";
         }
 
-        // TODO add to database
-        //  may involve parsing date/time for format
+        Map<String, Object> info = new HashMap<>();
+        info.put("name", name);
+        info.put("location", location);
+        info.put("date", date);
+        info.put("time", time);
+
+        DocumentReference dr = dBase.collection("Houses").document("testHouse")
+                .collection("events").document(date);
+        dr.set(info);
+        Log.i("info", "sending date to database as " + date);
 
         finish();
     }
