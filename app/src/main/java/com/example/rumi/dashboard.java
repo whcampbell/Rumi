@@ -2,6 +2,7 @@ package com.example.rumi;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -25,7 +26,9 @@ public class dashboard extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
-        //TextView houseTextView = view.findViewById(R.id.houseNumber);
+        TextView houseTextView = view.findViewById(R.id.houseNumber);
+
+        houseTextView.setText("House #" + MainActivity.houseNumber);
 
 
 

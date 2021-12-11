@@ -37,9 +37,11 @@ public class NewAccountActivity extends AppCompatActivity {
 
         EditText editUser = findViewById(R.id.editTextTextPersonName);
         EditText editPass = findViewById(R.id.editTextTextPersonName2);
+        EditText editHouse = findViewById(R.id.editTextNumber);
         String user = editUser.getText().toString();
         String pass = editPass.getText().toString();
-
+        String number = editHouse.getText().toString();
+        String id;
 
         Context context = getApplicationContext();
         String badInput = "Please provide all information";
@@ -57,16 +59,20 @@ public class NewAccountActivity extends AppCompatActivity {
             editUser.setText("");
             editPass.setText("");
             return;
+        }
+        if (number != null || !number.equals("")) {
+            id = number;
         }else {
-            Map<String, Object> userMap = new HashMap<String, Object>();
             Random rand = new Random();
-            String id = String.format("%04d", rand.nextInt(10000));
+            id = String.format("%04d", rand.nextInt(10000));
+        }
+            Map<String, Object> userMap = new HashMap<String, Object>();
             userMap.put(LoginActivity.usernameKey, user);
             userMap.put("pass", pass);
             userMap.put("housenum", id);
             sp.edit().putString(LoginActivity.usernameKey, user).apply();
 
-            db.collection("house").document(id).collection("user").document("user")
+            db.collection("Houses").document(id).collection("user").document(user)
                     .set(userMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -84,7 +90,7 @@ public class NewAccountActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("housenum", id);
             startActivity(intent);
-        }
+
 
     }
 

@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import java.io.Serializable;
@@ -27,7 +28,9 @@ import java.util.Map;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -38,6 +41,7 @@ public class agreements extends Fragment {
     private Button newAgreementButton;
     private FirebaseFirestore db;
     private int RequestCode = 1;
+
     private ArrayAdapter adapter;
     private ArrayList<String> agreementsArr = new ArrayList<String>();
     private String houseID;
@@ -51,6 +55,7 @@ public class agreements extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
 
         // get houseID
         // TODO: no hardcoding, use SP instead
@@ -80,6 +85,7 @@ public class agreements extends Fragment {
     public void onResume() {
         super.onResume();
         // populate list with Agreement objects using info from DB
+
         populateListView(adapter);
     }
 
@@ -91,6 +97,7 @@ public class agreements extends Fragment {
                 .collection("agreements");
 
         // TODO: fill agreementList using db
+
         LayoutInflater inflater = getLayoutInflater();
         ListView lv = inflater.inflate(R.layout.events_dialog, null).findViewById(R.id.list);
         lv.setAdapter(adapter);
@@ -126,7 +133,6 @@ public class agreements extends Fragment {
                     }
                 });
 
-
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
@@ -145,7 +151,7 @@ public class agreements extends Fragment {
 
     }
 
-    @Override
+  @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
 
         if (requestCode == RequestCode && resultCode == RESULT_OK && data != null) {
@@ -176,6 +182,7 @@ public class agreements extends Fragment {
             else {
                 agreementsRef.add(agreement);
             }
+
         }
 
     }

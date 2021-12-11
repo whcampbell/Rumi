@@ -66,73 +66,7 @@ public class payments extends Fragment {
 
 
 
-        db.collection("payment")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            ArrayList<String> unpaid = new ArrayList<String>();
-                            ArrayList<String> paid = new ArrayList<String>();
-                            ArrayList<QueryDocumentSnapshot> unpaidId = new ArrayList<QueryDocumentSnapshot>();
-                            ArrayList<QueryDocumentSnapshot> paidId = new ArrayList<QueryDocumentSnapshot>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.e(TAG, document.getId() + " => " + document.getData());
-                                if(document != null && document.getData().get("paid").equals("false")){
-                                    unpaid.add(String.format("Owe amount: %s", document.getData().get("amount")));
-                                    unpaidId.add(document);
-                                }else{
-                                    paid.add(String.format("Paid amount: %s", document.getData().get("amount")));
-                                    paidId.add(document);
-                                }
-                            }
-                            ArrayAdapter adapterString = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, unpaid);
-                            unpaidList.setTag(unpaidId);
-                            unpaidList.setAdapter(adapterString);
-                            unpaidList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                    Map<String, Object> payment = new HashMap<String, Object>();
-                                    payment.put("paid", "true");
-                                    ArrayList<QueryDocumentSnapshot> list = (ArrayList<QueryDocumentSnapshot>) unpaidList.getTag();
-                                    QueryDocumentSnapshot document = list.get(position);
-                                    String docId = document.getId();
-                                    db.collection("payment").document(docId).update(payment);
-                                    refresh();
-                                }
-                            });
-                            adapterString = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, paid);
-                            paidList.setTag(paidId);
-                            paidList.setAdapter(adapterString);
-                            paidList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-                                    Map<String, Object> payment = new HashMap<String, Object>();
-                                    payment.put("paid", "false");
-
-                                    ArrayList<QueryDocumentSnapshot> list =  (ArrayList<QueryDocumentSnapshot>) paidList.getTag();
-                                    QueryDocumentSnapshot document = list.get(position);
-                                    String docId = document.getId();
-                                    db.collection("payment").document(docId).update(payment);
-                                    refresh();
-                                }
-                            });
-                        } else {
-                            Log.e(TAG, "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
-        addPaymentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(getActivity(), newPaymentActivity.class);
-                startActivityForResult(intent, RequestCode);
-
-
-            }
-        });
+        display();
 
         return view;
 
@@ -147,7 +81,7 @@ public class payments extends Fragment {
         if (requestCode == RequestCode && resultCode == RESULT_OK && data != null) {
             //get the variables from the New Payment Activity
             Serializable s = data.getExtras().getSerializable("amount");
-            String amount = s.toString();
+            String amount = String.format("%.2f", s);
 
             s = data.getExtras().getSerializable("paid");
             String paid = s.toString();
@@ -167,8 +101,8 @@ public class payments extends Fragment {
 
             //add any values you want into the Map
 
-            db.collection("payment").add(payment);
-            refresh();
+            db.collection("Houses").document(MainActivity.houseNumber).collection("payments").add(payment);
+            display();
         }
 
     }
@@ -188,7 +122,7 @@ public class payments extends Fragment {
 
         }
     }
-    public void refresh(){
+    public void display(){
 
         TextView middle = view.findViewById(R.id.middle);
         addPaymentButton = view.findViewById(R.id.addPaymentButton);
@@ -200,7 +134,7 @@ public class payments extends Fragment {
 
 
 
-        db.collection("payment")
+        db.collection("Houses").document(MainActivity.houseNumber).collection("payments")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -213,10 +147,10 @@ public class payments extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.e(TAG, document.getId() + " => " + document.getData());
                                 if(document != null && document.getData().get("paid").equals("false")){
-                                    unpaid.add(String.format("Owe amount: %s", document.getData().get("amount")));
+                                    unpaid.add(String.format("Owe amount: $%s", document.getData().get("amount")));
                                     unpaidId.add(document);
                                 }else{
-                                    paid.add(String.format("Paid amount: %s", document.getData().get("amount")));
+                                    paid.add(String.format("Paid amount: $%s", document.getData().get("amount")));
                                     paidId.add(document);
                                 }
                             }
@@ -231,8 +165,8 @@ public class payments extends Fragment {
                                     ArrayList<QueryDocumentSnapshot> list = (ArrayList<QueryDocumentSnapshot>) unpaidList.getTag();
                                     QueryDocumentSnapshot document = list.get(position);
                                     String docId = document.getId();
-                                    db.collection("payment").document(docId).update(payment);
-                                    refresh();
+                                    db.collection("Houses").document(MainActivity.houseNumber).collection("payments").document(docId).update(payment);
+                                    display();
                                 }
                             });
                             adapterString = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, paid);
@@ -247,8 +181,8 @@ public class payments extends Fragment {
                                     ArrayList<QueryDocumentSnapshot> list =  (ArrayList<QueryDocumentSnapshot>) paidList.getTag();
                                     QueryDocumentSnapshot document = list.get(position);
                                     String docId = document.getId();
-                                    db.collection("payment").document(docId).update(payment);
-                                    refresh();
+                                    db.collection("Houses").document(MainActivity.houseNumber).collection("payments").document(docId).update(payment);
+                                    display();
                                 }
                             });
                         } else {

@@ -40,25 +40,26 @@ public class LoginActivity extends AppCompatActivity {
     public final String houseNumKey = "housenum";
     String user;
     String getHouseNumber;
-    Map<String, String> userPass = new HashMap<String, String>();
-    String houseNumber;
+    Map<String, String[]> userPass = new HashMap<String, String[]>();
+    public String houseNumber;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sp = getSharedPreferences("com.uw.rumi", Context.MODE_PRIVATE);
+        sp = getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
         userPass = getUserPass();
 
-        if (sp.getString(usernameKey, "").equals("")) {
+        if (sp.getString(usernameKey, "").equals("") || sp.getString(houseNumKey, "").equals("")) {
             setContentView(R.layout.activity_login);
         } else {
 
 
             user = sp.getString(usernameKey, "");
-            //readData(str -> Log.e(TAG, str));
-            //Log.e(TAG, houseNumber);
+            houseNumber = sp.getString(houseNumKey, "");
+
+            Log.e(TAG, user);
             Intent intent = new Intent(this, MainActivity.class);
-            //intent.putExtra("housenum", houseNumber);
+            intent.putExtra("housenum", houseNumber);
             startActivity(intent);
             finish();
         }
@@ -78,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
         Toast toast = Toast.makeText(context, badInput, duration);
 
-        if(!userPass.containsKey(user) || !userPass.get(user).equals(pass)){
+        if(!userPass.containsKey(user) || !userPass.get(user)[0].equals(pass)){
             toast.show();
             editUser.setText("");
             editPass.setText("");
@@ -101,16 +102,16 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-
         sp.edit().putString(usernameKey, user).apply();
+        sp.edit().putString(houseNumKey, userPass.get(user)[1]).apply();
 
         // TODO pull database info from matching username
         // check that passwords match
         // set intent to load correct household
 
-        //readData(str -> Log.e(TAG, str));
+
         Intent intent = new Intent(this, MainActivity.class);
-        //intent.putExtra("housenum", houseNumber);
+        intent.putExtra("housenum", userPass.get(user)[1]);
         startActivity(intent);
         finish();
 
@@ -120,8 +121,8 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NewAccountActivity.class);
         startActivity(intent);
     }
-    public Map<String, String> getUserPass(){
-        Map<String, String> returnval = new HashMap<String, String>();
+    public Map<String, String[]> getUserPass(){
+        Map<String, String[]> returnval = new HashMap<String, String[]>();
         db.collection("user")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -133,7 +134,9 @@ public class LoginActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String username = (String) document.getData().get("username");
                                 String pass = (String) document.getData().get("pass");
-                                returnval.put(username, pass);
+                                String housenum = (String) document.getData().get(houseNumKey);
+                                String val[] = {pass, housenum};
+                                returnval.put(username, val);
 
                             }
 
