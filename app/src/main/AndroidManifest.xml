@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Rumi">
         <activity
+            android:name=".editAgreementActivity"
+            android:exported="true" />
+        <activity
             android:name=".NewAccountActivity"
             android:exported="true" />
         <activity

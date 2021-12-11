@@ -28,6 +28,8 @@ import java.util.Map;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -40,6 +42,12 @@ public class agreements extends Fragment {
     private FirebaseFirestore db;
     private int RequestCode = 1;
 
+    private ArrayAdapter adapter;
+    private ArrayList<String> agreementsArr = new ArrayList<String>();
+    private String houseID;
+    private String action = "add";
+    private DocumentReference docRef = null;
+
     public agreements(FirebaseFirestore db) {
         this.db = db;
     }
@@ -48,20 +56,27 @@ public class agreements extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
+        // get houseID
+        // TODO: no hardcoding, use SP instead
+        houseID = "testHouse";
+
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_agreements, container, false);
+        adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, agreementsArr);
         newAgreementButton = view.findViewById(R.id.newAgreementButton);
 
         newAgreementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                action = "add";
                 Intent intent = new Intent(getActivity(), newAgreementActivity.class);
                 startActivityForResult(intent, RequestCode);
             }
         });
 
         // populate list with Agreement objects using info from DB
-        populateListView();
+        populateListView(adapter);
 
         return view;
     }
@@ -70,20 +85,19 @@ public class agreements extends Fragment {
     public void onResume() {
         super.onResume();
         // populate list with Agreement objects using info from DB
-        populateListView();
+
+        populateListView(adapter);
     }
 
     // This method use SimpleAdapter to show data in ListView.
-    private void populateListView() {
+    private void populateListView(ArrayAdapter adapter) {
 
-        // traverse db to this house's agreements TODO: no hardcoding for house, get from SP instead
-        CollectionReference agreementsRef = db.collection("Houses").document("testHouse")
+        // traverse db to this house's agreements
+        CollectionReference agreementsRef = db.collection("Houses").document(houseID)
                 .collection("agreements");
 
-        // fill agreementList using db
-        ArrayList<String> agreementsArr = new ArrayList<String>();
+        // TODO: fill agreementList using db
 
-        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, agreementsArr);
         LayoutInflater inflater = getLayoutInflater();
         ListView lv = inflater.inflate(R.layout.events_dialog, null).findViewById(R.id.list);
         lv.setAdapter(adapter);
@@ -124,11 +138,12 @@ public class agreements extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
                 Object clickItemObj = adapterView.getAdapter().getItem(index);
                 // TODO: send to edit note activity
-                // need to make new activity.java and activity.xml
-                // copy new_agreement.xml and change to "edit agreement"
-                // EditTexts should show current title/body
-                // cancel is the same
-                // done should update db rather than add to it
+                // save button should update db rather than add to it - get document reference then use ref.update(newInfo)
+                // get doc reference, pass to onActivityResult somehow
+                // docRef = ----------------;
+                action = "edit";
+                Intent intent = new Intent(getActivity(), editAgreementActivity.class);
+                startActivityForResult(intent, RequestCode);
                 // delete below line
                 Toast.makeText(getContext(), "You clicked " + clickItemObj.toString(), Toast.LENGTH_SHORT).show();
             }
@@ -136,7 +151,7 @@ public class agreements extends Fragment {
 
     }
 
-    @Override
+  @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
 
         if (requestCode == RequestCode && resultCode == RESULT_OK && data != null) {
@@ -152,11 +167,22 @@ public class agreements extends Fragment {
             agreement.put("title", title);
             agreement.put("body", body);
 
-            // traverse db to this house's agreements TODO: no hardcoding for house, get from SP instead
-            CollectionReference agreementsRef = db.collection("Houses").document("testHouse")
+            // traverse db to this house's agreements
+            CollectionReference agreementsRef = db.collection("Houses").document(houseID)
                     .collection("agreements");
 
-            agreementsRef.add(agreement); // TODO: how to edit doc not just add new doc
+            if (action == "edit") {
+                if (docRef != null) {
+                    docRef.set(agreement); // TODO: test if doc is updated
+                }
+                else {
+                    Log.e("Err", "No such document");
+                }
+            }
+            else {
+                agreementsRef.add(agreement);
+            }
+
         }
 
     }
