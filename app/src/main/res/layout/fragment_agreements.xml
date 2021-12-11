@@ -24,10 +24,9 @@
 
     <ListView
         android:id="@+id/listView"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_width="332dp"
+        android:layout_height="326dp"
         android:layout_marginTop="108dp"
-        android:text="LIST OF AGREEMENTS HERE"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -38,11 +37,11 @@
         android:id="@+id/newAgreementButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="264dp"
+        android:layout_marginTop="32dp"
         android:height="48dp"
-        android:text="New Agreement"
+        android:text="+"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.89"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

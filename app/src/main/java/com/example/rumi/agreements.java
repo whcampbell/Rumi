@@ -23,6 +23,7 @@ import android.widget.Toast;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,12 +38,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class agreements extends Fragment {
 
+    private ArrayAdapter adapter;
+    private ListView lv;
     private View view;
     private Button newAgreementButton;
     private FirebaseFirestore db;
     private int RequestCode = 1;
 
-    private ArrayAdapter adapter;
     private ArrayList<String> agreementsArr = new ArrayList<String>();
     private String houseID;
     private String action = "add";
@@ -58,14 +60,20 @@ public class agreements extends Fragment {
 
 
         // get houseID
-        // TODO: no hardcoding, use SP instead
-        houseID = "testHouse";
+        houseID = MainActivity.houseNumber;
+        Log.e(TAG, "houseID = " + houseID);
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_agreements, container, false);
-        adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, agreementsArr);
-        newAgreementButton = view.findViewById(R.id.newAgreementButton);
 
+        lv = view.findViewById(R.id.listView);
+        adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, agreementsArr);
+        lv.setAdapter(adapter);
+
+        // populate list with Agreement objects using info from DB
+        populateListView(adapter, lv);
+
+        newAgreementButton = view.findViewById(R.id.newAgreementButton);
         newAgreementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,33 +83,19 @@ public class agreements extends Fragment {
             }
         });
 
-        // populate list with Agreement objects using info from DB
-        populateListView(adapter);
-
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        // populate list with Agreement objects using info from DB
+    // fill agreementsArr using db, then notify data set changed
+    private void populateListView(ArrayAdapter adapter, ListView lv) {
 
-        populateListView(adapter);
-    }
-
-    // This method use SimpleAdapter to show data in ListView.
-    private void populateListView(ArrayAdapter adapter) {
+        adapter.notifyDataSetChanged();
 
         // traverse db to this house's agreements
         CollectionReference agreementsRef = db.collection("Houses").document(houseID)
                 .collection("agreements");
 
-        // TODO: fill agreementList using db
-
-        LayoutInflater inflater = getLayoutInflater();
-        ListView lv = inflater.inflate(R.layout.events_dialog, null).findViewById(R.id.list);
-        lv.setAdapter(adapter);
-
+        // TODO: fill agreementArr using db
         agreementsRef.get()
                 .addOnCompleteListener(new OnCompleteListener() {
                     @Override
@@ -114,14 +108,12 @@ public class agreements extends Fragment {
                                     int i = 1;
                                     String agreementLine = "";
                                     for (Map.Entry<String, Object> entry : map.entrySet()) {
-                                        agreementLine += entry.getValue() + "\n";
+                                        agreementLine = entry.getValue() + "\n" + agreementLine;
                                         if (i % 2 == 0) {
                                             agreementsArr.add(agreementLine);
-                                            agreementLine = "";
                                         }
                                         ++i;
                                     }
-                                    agreementsArr.add(agreementLine);
                                     adapter.notifyDataSetChanged();
                                 } else {
                                     Log.e("Err", "No such document");
@@ -139,12 +131,12 @@ public class agreements extends Fragment {
                 Object clickItemObj = adapterView.getAdapter().getItem(index);
                 // TODO: send to edit note activity
                 // save button should update db rather than add to it - get document reference then use ref.update(newInfo)
-                // get doc reference, pass to onActivityResult somehow
+                // TODO: get doc reference, pass to onActivityResult somehow
                 // docRef = ----------------;
-                action = "edit";
+                /**action = "edit";
                 Intent intent = new Intent(getActivity(), editAgreementActivity.class);
-                startActivityForResult(intent, RequestCode);
-                // delete below line
+                startActivityForResult(intent, RequestCode);*/
+                // delete below line TODO: just say title in toast
                 Toast.makeText(getContext(), "You clicked " + clickItemObj.toString(), Toast.LENGTH_SHORT).show();
             }
         });
