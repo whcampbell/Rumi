@@ -48,20 +48,21 @@ public class agreements extends Fragment {
     private ArrayList<String> agreementsArr = new ArrayList<String>();
     private String houseID;
     private String action = "add";
-    private DocumentReference docRef = null;
+    private String docId = "";
 
     public agreements(FirebaseFirestore db) {
         this.db = db;
     }
 
+    // TODO: not updating after new/edit/delete - need to leave then go back
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
         // get houseID
         houseID = MainActivity.houseNumber;
-        Log.e(TAG, "houseID = " + houseID);
+        Log.d(TAG, "houseID = " + houseID);
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_agreements, container, false);
@@ -89,13 +90,11 @@ public class agreements extends Fragment {
     // fill agreementsArr using db, then notify data set changed
     private void populateListView(ArrayAdapter adapter, ListView lv) {
 
-        adapter.notifyDataSetChanged();
-
         // traverse db to this house's agreements
         CollectionReference agreementsRef = db.collection("Houses").document(houseID)
                 .collection("agreements");
 
-        // TODO: fill agreementArr using db
+        // fill agreementArr for lv using db
         agreementsRef.get()
                 .addOnCompleteListener(new OnCompleteListener() {
                     @Override
@@ -129,16 +128,35 @@ public class agreements extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
                 Object clickItemObj = adapterView.getAdapter().getItem(index);
-                // TODO: get doc reference
-                //docRef = db.collection("Houses").document(houseID)
-                //        .collection("agreements").document("----------------");
-                action = "edit";
-                // send to edit note activity, use putExtra() to pass current agreement info
-                Intent intent = new Intent(getActivity(), editAgreementActivity.class);
                 String[] curAgreement = clickItemObj.toString().split("\n", 2);
-                intent.putExtra("title", curAgreement[0]);
-                intent.putExtra("body", curAgreement[1]);
-                startActivityForResult(intent, RequestCode);
+                // get docId
+                Task<QuerySnapshot> colRef = db.collection("Houses").document(houseID)
+                        .collection("agreements")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Log.d(TAG, "CA[0] = " + curAgreement[0] + " =? " + document.getData().get("title"));
+                                        if (document.getData().get("title").equals(curAgreement[0])) {
+                                            docId = document.getId();
+                                            Log.d(TAG, "docId = " + docId + " => " + document.getData().get("title"));
+                                            action = "edit";
+                                            // send to edit note activity, use putExtra() to pass current agreement info
+                                            Intent intent = new Intent(getActivity(), editAgreementActivity.class);
+                                            intent.putExtra("title", curAgreement[0]);
+                                            intent.putExtra("body", curAgreement[1]);
+                                            Log.d(TAG, "passing to intent: docId = " + docId);
+                                            intent.putExtra("docId", docId);
+                                            startActivityForResult(intent, RequestCode);
+                                        }
+                                    }
+                                } else {
+                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
             }
         });
 
@@ -165,8 +183,8 @@ public class agreements extends Fragment {
                     .collection("agreements");
 
             if (action == "edit") {
-                if (docRef != null) {
-                    docRef.set(agreement);
+                if (docId != null) {
+                    agreementsRef.document(docId).set(agreement);
                 }
                 else {
                     Log.e("Err", "No such document");
@@ -175,7 +193,6 @@ public class agreements extends Fragment {
             else {
                 agreementsRef.add(agreement);
             }
-
         }
 
     }
