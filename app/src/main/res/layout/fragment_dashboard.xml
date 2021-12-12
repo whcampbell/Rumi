@@ -9,19 +9,43 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/Recycler"
         android:layout_width="match_parent"
-        android:layout_height="360dp"
-        android:layout_marginTop="72dp"
+        android:layout_height="290dp"
+        android:layout_marginTop="152dp"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
+        tools:layout_editor_absoluteX="16dp" />
 
     <TextView
         android:id="@+id/houseNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/paidList"
-        app:layout_constraintEnd_toStartOf="@+id/title"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName3"
+        android:layout_width="202dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="10dp"
+        android:ems="10"
+        android:hint="Make a New Post"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/Recycler"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:onClick="onClickPost"
+        android:text="Post"
+        app:layout_constraintStart_toEndOf="@+id/editTextTextPersonName3"
+        app:layout_constraintTop_toTopOf="@+id/editTextTextPersonName3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

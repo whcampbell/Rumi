@@ -22,6 +22,7 @@ import java.util.ArrayList;
 public class dashboard extends Fragment {
     private ArrayList<DashConvo> convoList;
     private RecyclerView reView;
+    private RecyclerAdapter.RecyclerClickListenter listener;
 
 
     public dashboard() {
@@ -35,7 +36,9 @@ public class dashboard extends Fragment {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         TextView houseTextView = view.findViewById(R.id.houseNumber);
 
-        houseTextView.setText("House #" + MainActivity.houseNumber);
+
+
+        houseTextView.setText(MainActivity.getHouseName());
 
         reView = view.findViewById(R.id.Recycler);
 
@@ -57,11 +60,27 @@ public class dashboard extends Fragment {
     }
 
     private void setAdapter() {
-        RecyclerAdapter adapter = new RecyclerAdapter(convoList);
+        setOnClickListener();
+        RecyclerAdapter adapter = new RecyclerAdapter(convoList, listener);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         reView.setLayoutManager(layoutManager);
         reView.setItemAnimator(new DefaultItemAnimator());
         reView.setAdapter(adapter);
+    }
+
+    private void setOnClickListener() {
+        listener = new RecyclerAdapter.RecyclerClickListenter() {
+            @Override
+            public void onClick(View view, int position) {
+                Intent intent = new Intent(getActivity(), ConvoActivity.class);
+                intent.putExtra("head", convoList.get(position).getConvoHead());
+                startActivity(intent);
+            }
+        };
+    }
+
+    public void onClickPost(View view) {
+        // TODO add new convo to database and top of recycler view
     }
 
 }

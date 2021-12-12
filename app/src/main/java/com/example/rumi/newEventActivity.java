@@ -57,10 +57,11 @@ public class newEventActivity extends AppCompatActivity {
 
         Map<String, Object> info = new HashMap<>();
 
-        SharedPreferences sp = getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
-        String houseName = sp.getString("houseName", "");
+        //SharedPreferences sp = getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
+        //String houseName = sp.getString("houseName", "");
+        String houseNum = MainActivity.houseNumber;
 
-        DocumentReference dr = dBase.collection("Houses").document(houseName)
+        DocumentReference dr = dBase.collection("Houses").document(houseNum)
                 .collection("events").document(date);
 
         dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

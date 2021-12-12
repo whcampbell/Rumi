@@ -13,12 +13,14 @@ import java.util.ArrayList;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>{
     private ArrayList<DashConvo> convosList;
+    private RecyclerClickListenter listener;
 
-    public RecyclerAdapter(ArrayList<DashConvo> list) {
+    public RecyclerAdapter(ArrayList<DashConvo> list, RecyclerClickListenter listener) {
+        this.listener = listener;
         this.convosList = list;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView HeadText;
         private TextView NextText;
 
@@ -26,6 +28,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
             super(itemView);
             HeadText = itemView.findViewById(R.id.textConvoHead);
             NextText = itemView.findViewById(R.id.textConvoComment);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            listener.onClick(view, getAdapterPosition());
         }
     }
 
@@ -49,4 +57,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
     public int getItemCount() {
         return convosList.size();
     }
+
+    public interface RecyclerClickListenter {
+        void onClick(View view, int position);
+    }
+
 }
