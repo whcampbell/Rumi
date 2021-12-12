@@ -129,15 +129,16 @@ public class agreements extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
                 Object clickItemObj = adapterView.getAdapter().getItem(index);
-                // TODO: send to edit note activity
-                // save button should update db rather than add to it - get document reference then use ref.update(newInfo)
-                // TODO: get doc reference, pass to onActivityResult somehow
-                // docRef = ----------------;
-                /**action = "edit";
+                // TODO: get doc reference
+                //docRef = db.collection("Houses").document(houseID)
+                //        .collection("agreements").document("----------------");
+                action = "edit";
+                // send to edit note activity, use putExtra() to pass current agreement info
                 Intent intent = new Intent(getActivity(), editAgreementActivity.class);
-                startActivityForResult(intent, RequestCode);*/
-                // delete below line TODO: just say title in toast
-                Toast.makeText(getContext(), "You clicked " + clickItemObj.toString(), Toast.LENGTH_SHORT).show();
+                String[] curAgreement = clickItemObj.toString().split("\n", 2);
+                intent.putExtra("title", curAgreement[0]);
+                intent.putExtra("body", curAgreement[1]);
+                startActivityForResult(intent, RequestCode);
             }
         });
 
@@ -165,7 +166,7 @@ public class agreements extends Fragment {
 
             if (action == "edit") {
                 if (docRef != null) {
-                    docRef.set(agreement); // TODO: test if doc is updated
+                    docRef.set(agreement);
                 }
                 else {
                     Log.e("Err", "No such document");

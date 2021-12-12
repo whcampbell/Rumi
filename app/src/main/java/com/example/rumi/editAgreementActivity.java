@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class editAgreementActivity extends AppCompatActivity {
 
@@ -19,9 +20,14 @@ public class editAgreementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_agreement);
 
-        // TODO: EditTexts should show current title/body
+        Intent intent = getIntent();
+
+        // EditTexts show current title/body
         editTextTitle = findViewById(R.id.editTextTitle);
         editTextBody = findViewById(R.id.editTextBody);
+
+        editTextTitle.setText(intent.getStringExtra("title"), TextView.BufferType.EDITABLE);
+        editTextBody.setText(intent.getStringExtra("body"), TextView.BufferType.EDITABLE);
     }
 
     public void onClickSave(View view) {
