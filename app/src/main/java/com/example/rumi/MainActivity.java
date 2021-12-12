@@ -1,7 +1,5 @@
 package com.example.rumi;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -18,18 +16,29 @@ import android.widget.Toast;
 
 
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private NavigationBarView bottomNavigationView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private SharedPreferences sp;
     public static String houseNumber;
+    public static String username;
+    public static String houseName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
+
         sp = getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
+        Intent intent = getIntent();
+        houseNumber = intent.getStringExtra(LoginActivity.houseNumKey);
+        username = intent.getStringExtra(LoginActivity.usernameKey);
         // house name will be set either in "new account activity" or "dashboard activity."
         // it is possible that no house is set on login, so <username>'s house will be created
         // as a default.
@@ -52,15 +61,14 @@ public class MainActivity extends AppCompatActivity {
         Log.i("info", "after set(?), housename is " + sp.getString("houseName", "err"));
 
         Context context = getApplicationContext();
-        String welcome = "Welcome home!";
+        String welcome = String.format("Welcome home, %s!", username);
         int duration = Toast.LENGTH_LONG;
         Toast toast = Toast.makeText(context, welcome, duration);
         toast.show();
 
 
 
-        Intent intent = getIntent();
-        houseNumber = intent.getStringExtra("housenum");
+
        //Log.e(TAG, houseNumber);
 
         super.onCreate(savedInstanceState);
@@ -82,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 logout();
                 break;
             case R.id.SwitchHouse:
-
+                houseEdit();
                 break;
         }
 
@@ -128,6 +136,24 @@ public class MainActivity extends AppCompatActivity {
         sp.edit().remove(LoginActivity.usernameKey).apply();
         startActivity(new Intent(this, LoginActivity.class));
 
+    }
+    public void houseEdit(){
+        HouseEditDialog houseEdit = new HouseEditDialog(sp);
+        houseEdit.show(getSupportFragmentManager(), "events dialog");
+    }
+
+    public String getHouseName(){
+        Map<String, Object> houseName = new HashMap<String, Object>();
+        db.collection("Houses").document(houseNumber).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                   houseName.put("name", document.getData().get("houseName"));
+
+                }
+            }
+        });
+        return (String) houseName.get("name");
     }
 
 }
