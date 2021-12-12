@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new dashboard();
                     break;
                 case R.id.chores:
-                    fragment = new chores();
+                    fragment = new chores(db);
                     break;
                 case R.id.calendar:
                     fragment = new calendar();
