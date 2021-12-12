@@ -47,14 +47,11 @@ public class agreements extends Fragment {
 
     private ArrayList<String> agreementsArr = new ArrayList<String>();
     private String houseID;
-    private String action = "add";
     private String docId = "";
 
     public agreements(FirebaseFirestore db) {
         this.db = db;
     }
-
-    // TODO: not updating after new/edit/delete - need to leave then go back
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,13 +69,12 @@ public class agreements extends Fragment {
         lv.setAdapter(adapter);
 
         // populate list with Agreement objects using info from DB
-        populateListView(adapter, lv);
+        populateListView();
 
         newAgreementButton = view.findViewById(R.id.newAgreementButton);
         newAgreementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                action = "add";
                 Intent intent = new Intent(getActivity(), newAgreementActivity.class);
                 startActivityForResult(intent, RequestCode);
             }
@@ -88,13 +84,15 @@ public class agreements extends Fragment {
     }
 
     // fill agreementsArr using db, then notify data set changed
-    private void populateListView(ArrayAdapter adapter, ListView lv) {
+    private void populateListView() {
+
+        agreementsArr.clear();
 
         // traverse db to this house's agreements
         CollectionReference agreementsRef = db.collection("Houses").document(houseID)
                 .collection("agreements");
 
-        // fill agreementArr for lv using db
+        // fill agreementArr for lv using db, notify data set changed for each existing doc
         agreementsRef.get()
                 .addOnCompleteListener(new OnCompleteListener() {
                     @Override
@@ -142,7 +140,6 @@ public class agreements extends Fragment {
                                         if (document.getData().get("title").equals(curAgreement[0])) {
                                             docId = document.getId();
                                             Log.d(TAG, "docId = " + docId + " => " + document.getData().get("title"));
-                                            action = "edit";
                                             // send to edit note activity, use putExtra() to pass current agreement info
                                             Intent intent = new Intent(getActivity(), editAgreementActivity.class);
                                             intent.putExtra("title", curAgreement[0]);
@@ -166,33 +163,43 @@ public class agreements extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data){
 
         if (requestCode == RequestCode && resultCode == RESULT_OK && data != null) {
-            // get the variables from the New Agreement Activity
-            Serializable t = data.getExtras().getSerializable("title");
-            String title = t.toString();
 
-            Serializable b = data.getExtras().getSerializable("body");
-            String body = b.toString();
+            // get action type
+            String action = data.getStringExtra("action");
+            Log.d(TAG,"action = " + action);
 
-            // add values into the Map
-            Map<String, Object> agreement = new HashMap<String, Object>();
-            agreement.put("title", title);
-            agreement.put("body", body);
+            // if not delete (add or edit)
+            if (!action.equals("delete")) {
 
-            // traverse db to this house's agreements
-            CollectionReference agreementsRef = db.collection("Houses").document(houseID)
-                    .collection("agreements");
+                // get the variables from the New Agreement Activity
+                Serializable t = data.getExtras().getSerializable("title");
+                String title = t.toString();
 
-            if (action == "edit") {
-                if (docId != null) {
-                    agreementsRef.document(docId).set(agreement);
-                }
-                else {
-                    Log.e("Err", "No such document");
+                Serializable b = data.getExtras().getSerializable("body");
+                String body = b.toString();
+
+                // add values into the Map
+                Map<String, Object> agreement = new HashMap<String, Object>();
+                agreement.put("title", title);
+                agreement.put("body", body);
+
+                // traverse db to this house's agreements
+                CollectionReference agreementsRef = db.collection("Houses").document(houseID)
+                        .collection("agreements");
+
+                if (action.equals("edit")) {
+                    if (docId != null) {
+                        agreementsRef.document(docId).set(agreement);
+                    } else {
+                        Log.e("Err", "No such document");
+                    }
+                } else if (action.equals("add")) {
+                    agreementsRef.add(agreement);
+                    Log.d(TAG, "added to db");
                 }
             }
-            else {
-                agreementsRef.add(agreement);
-            }
+            // update list view
+            populateListView();
         }
 
     }

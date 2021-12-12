@@ -47,6 +47,7 @@ public class editAgreementActivity extends AppCompatActivity {
         Intent output = new Intent();
         output.putExtra("title", title);
         output.putExtra("body", body);
+        output.putExtra("action", "edit");
         setResult(RESULT_OK, output);
 
         finish();
@@ -78,6 +79,11 @@ public class editAgreementActivity extends AppCompatActivity {
         } else {
             Log.e("err", "Error: docId is null");
         }
+
+        // send info back
+        Intent output = new Intent();
+        output.putExtra("action", "delete");
+        setResult(RESULT_OK, output);
 
         finish();
     }

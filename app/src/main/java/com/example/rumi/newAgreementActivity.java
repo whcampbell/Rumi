@@ -28,6 +28,7 @@ public class newAgreementActivity extends AppCompatActivity {
         Intent output = new Intent();
         output.putExtra("title", title);
         output.putExtra("body", body);
+        output.putExtra("action", "add");
         setResult(RESULT_OK, output);
 
         finish();
