@@ -24,41 +24,19 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private NavigationBarView bottomNavigationView;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private SharedPreferences sp;
     public static String houseNumber;
     public static String username;
-    public static String houseName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
 
         sp = getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
         Intent intent = getIntent();
         houseNumber = intent.getStringExtra(LoginActivity.houseNumKey);
         username = intent.getStringExtra(LoginActivity.usernameKey);
-        // house name will be set either in "new account activity" or "dashboard activity."
-        // it is possible that no house is set on login, so <username>'s house will be created
-        // as a default.
 
-        String houseName = sp.getString("houseName", "");
-        if (houseName.equals("")) {
-            // no house currently in shared preferences. need to go to default
-
-            // HARD CODE FOR TESTING
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putString("houseName", "testHouse").apply();
-            // HARD CODE FOR TESTING
-            Log.i("info", "Setting houseName");
-
-            //TODO database call create or load default house "<username>'s house"
-        } else {
-            Log.i("info", "House name in SP is " + houseName);
-        }
-
-        Log.i("info", "after set(?), housename is " + sp.getString("houseName", "err"));
 
         Context context = getApplicationContext();
         String welcome = String.format("Welcome home, %s!", username);
@@ -66,10 +44,6 @@ public class MainActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(context, welcome, duration);
         toast.show();
 
-
-
-
-       //Log.e(TAG, houseNumber);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -80,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(bottomnavFunction);
         bottomNavigationView.setSelectedItemId(R.id.dashboard);
 
-
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Fragment fragment = null;
@@ -142,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         houseEdit.show(getSupportFragmentManager(), "events dialog");
     }
 
-    public String getHouseName(){
+    public static String getHouseName(){
         Map<String, Object> houseName = new HashMap<String, Object>();
         db.collection("Houses").document(houseNumber).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -153,7 +127,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        return (String) houseName.get("name");
+        String name = (String) houseName.get("name");
+        if (name == null || name.equals("")) {
+            name = String.format("%s's House", username);
+        }
+        return name;
     }
 
 }
