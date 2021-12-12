@@ -57,7 +57,8 @@ public class LoginActivity extends AppCompatActivity {
             houseNumber = sp.getString(houseNumKey, "");
 
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("housenum", houseNumber);
+            intent.putExtra(houseNumKey, houseNumber);
+            intent.putExtra(usernameKey, user);
             startActivity(intent);
             finish();
         }
@@ -99,6 +100,8 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 
+        sp.edit().remove(usernameKey).apply();
+        sp.edit().remove(houseNumKey).apply();
 
         sp.edit().putString(usernameKey, user).apply();
         sp.edit().putString(houseNumKey, userPass.get(user)[1]).apply();
@@ -109,7 +112,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("housenum", userPass.get(user)[1]);
+        intent.putExtra(houseNumKey, userPass.get(user)[1]);
+        intent.putExtra(usernameKey, user);
         startActivity(intent);
         finish();
 
