@@ -59,7 +59,9 @@ public class CalendarDialog extends AppCompatDialogFragment {
         SharedPreferences sp = getActivity().getSharedPreferences("com.example.rumi", Context.MODE_PRIVATE);
         String houseName = sp.getString("houseName", "");
 
-        if (houseName.equals("")) {
+        String houseNum = MainActivity.houseNumber;
+
+        if (houseNum.equals("")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(date)
                     .setTitle("No events - house name not found")
@@ -72,7 +74,7 @@ public class CalendarDialog extends AppCompatDialogFragment {
             return builder.create();
         }
 
-        DocumentReference eventsRef = dBase.collection("Houses").document(houseName)
+        DocumentReference eventsRef = dBase.collection("Houses").document(houseNum)
                 .collection("events").document(date);
 
         eventsRef.get()
