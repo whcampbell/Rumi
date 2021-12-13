@@ -27,7 +27,7 @@
         <entry key="app/src/main/res/drawable/ic_agree.xml" value="0.18072916666666666" />
         <entry key="app/src/main/res/drawable/ic_dash.xml" value="0.18072916666666666" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.18072916666666666" />
-        <entry key="app/src/main/res/layout/activity_convo.xml" value="0.13854166666666667" />
+        <entry key="app/src/main/res/layout/activity_convo.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1503623188405797" />
         <entry key="app/src/main/res/layout/dash_convo_card.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_agreements.xml" value="0.1503623188405797" />
