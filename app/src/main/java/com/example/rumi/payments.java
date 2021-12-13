@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -46,6 +47,8 @@ public class payments extends Fragment {
     private ListView unpaidList;
     private ListView paidList;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    public static ArrayList<String> housemates = new ArrayList<String>();
+
 
 
 
@@ -60,7 +63,7 @@ public class payments extends Fragment {
         addPaymentButton = view.findViewById(R.id.addPaymentButton);
         unpaidList = view.findViewById(R.id.unpaidList);
         paidList = view.findViewById(R.id.paidList);
-
+        housemates = getHousemates();
 
 
 
@@ -89,15 +92,17 @@ public class payments extends Fragment {
             s = data.getExtras().getSerializable("duedate");
             String dueDate = s.toString();
 
-           // s = data.getExtras().getSerializable("payer");
-            //String payer = s.toString();
+            s = data.getExtras().getSerializable("payer");
+            String payer = s.toString();
 
 
             Map<String, Object> payment = new HashMap<String, Object>();
             payment.put("amount", amount);
             payment.put("paid", paid);
             payment.put("duedate", dueDate);
-            //payment.put("payer", payer);
+            payment.put("payer", payer);
+            payment.put("payee", MainActivity.username);
+
 
             //add any values you want into the Map
 
@@ -106,22 +111,20 @@ public class payments extends Fragment {
         }
 
     }
-    //output.putExtra("paid", false);
-    //        output.putExtra("dudate", dueDate);
-    //        output.putExtra("payer", userToPay);
-    //        output.putExtra("reocurring", reocurring);
-    //        output.putExtra("reocurancefreq", freq);
-    public class payment {
-        float amount;
-        String duedate;
-        String payer;
-        Boolean reoccurring;
-        String reoccurFreq;
-        public payment (float amount, String duedate, String payer, Boolean reoccurring, String reoccurFreq){
-            this.amount = amount;
 
-        }
+
+    public ArrayList<String> getHousemates(){
+        ArrayList<String> housemates = new ArrayList<String>();
+        db.collection("Houses").document(MainActivity.houseNumber).collection("user").get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                for(DocumentSnapshot document : task.getResult()){
+                    housemates.add(document.getId());
+                }
+            }
+        });
+        return housemates;
     }
+
     public void display(){
 
         TextView middle = view.findViewById(R.id.middle);
@@ -145,12 +148,17 @@ public class payments extends Fragment {
                             ArrayList<QueryDocumentSnapshot> unpaidId = new ArrayList<QueryDocumentSnapshot>();
                             ArrayList<QueryDocumentSnapshot> paidId = new ArrayList<QueryDocumentSnapshot>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.e(TAG, document.getId() + " => " + document.getData());
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                String amount = (String)document.getData().get("amount");
+                                String dueDate = (String)document.getData().get("duedate");
+                                String []dueDateArr = dueDate.split(" ");
+                                String payer = (String)document.getData().get("payer");
+                                String payee = (String)document.getData().get("payee");
                                 if(document != null && document.getData().get("paid").equals("false")){
-                                    unpaid.add(String.format("Owe amount: $%s", document.getData().get("amount")));
+                                    unpaid.add(String.format("%s owes $%s to %s by %s %s %s %s", payer, amount, payee, dueDateArr[0], dueDateArr[1], dueDateArr[2], dueDateArr[5]));
                                     unpaidId.add(document);
                                 }else{
-                                    paid.add(String.format("Paid amount: $%s", document.getData().get("amount")));
+                                    paid.add(String.format("%s paid $%s to %s by %s", payer, amount, payee, dueDate));
                                     paidId.add(document);
                                 }
                             }
@@ -181,12 +189,12 @@ public class payments extends Fragment {
                                     ArrayList<QueryDocumentSnapshot> list =  (ArrayList<QueryDocumentSnapshot>) paidList.getTag();
                                     QueryDocumentSnapshot document = list.get(position);
                                     String docId = document.getId();
-                                    db.collection("Houses").document(MainActivity.houseNumber).collection("payments").document(docId).update(payment);
+                                    db.collection("Houses").document(MainActivity.houseNumber).collection("payments").document(docId).delete();
                                     display();
                                 }
                             });
                         } else {
-                            Log.e(TAG, "Error getting documents.", task.getException());
+                            Log.d(TAG, "Error getting documents.", task.getException());
                         }
                     }
                 });

@@ -37,6 +37,12 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+        <activity
+            android:name=".newChoreActivity"
+            android:exported="true" />
+        <activity
+            android:name=".editChoreActivity"
+            android:exported="true" />
         <activity android:name=".newAgreementActivity" />
     </application>
 
