@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 
@@ -48,6 +50,7 @@ public class agreements extends Fragment {
     private ArrayList<String> agreementsArr = new ArrayList<String>();
     private String houseID;
     private String docId = "";
+    private int globalIndex;
 
     public agreements(FirebaseFirestore db) {
         this.db = db;
@@ -127,7 +130,8 @@ public class agreements extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
                 Object clickItemObj = adapterView.getAdapter().getItem(index);
                 String[] curAgreement = clickItemObj.toString().split("\n", 2);
-                // get docId
+                globalIndex = index;
+
                 Task<QuerySnapshot> colRef = db.collection("Houses").document(houseID)
                         .collection("agreements")
                         .get()
@@ -146,6 +150,7 @@ public class agreements extends Fragment {
                                             intent.putExtra("body", curAgreement[1]);
                                             Log.d(TAG, "passing to intent: docId = " + docId);
                                             intent.putExtra("docId", docId);
+                                            intent.putExtra("index", globalIndex);
                                             startActivityForResult(intent, RequestCode);
                                         }
                                     }
@@ -168,8 +173,37 @@ public class agreements extends Fragment {
             String action = data.getStringExtra("action");
             Log.d(TAG,"action = " + action);
 
+            if (action.equals("delete")) {
+                if (docId != "") {
+                    DocumentReference docRef = db.collection("Houses").document(MainActivity.houseNumber)
+                            .collection("agreements").document(docId);
+                    docRef.delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("err", "DocumentSnapshot successfully deleted!");
+                                    // update list view
+                                    Serializable i = data.getExtras().getSerializable("index");
+                                    String index = i.toString();
+                                    //lv.removeViewAt(Integer.parseInt(index));
+                                    String value = (String) adapter.getItem(Integer.parseInt(index));
+                                    adapter.remove(value);
+                                    adapter.notifyDataSetChanged();
+                                    Log.d(TAG, "removing index = " + index + " from lv");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("err", "Error deleting document", e);
+                                }
+                            });
+                } else {
+                    Log.e("err", "Error: docId is null");
+                }
+            }
             // if not delete (add or edit)
-            if (!action.equals("delete")) {
+            else {
 
                 // get the variables from the New Agreement Activity
                 Serializable t = data.getExtras().getSerializable("title");
@@ -190,6 +224,7 @@ public class agreements extends Fragment {
                 if (action.equals("edit")) {
                     if (docId != null) {
                         agreementsRef.document(docId).set(agreement);
+                        Log.d(TAG, "updated db");
                     } else {
                         Log.e("Err", "No such document");
                     }
@@ -197,9 +232,10 @@ public class agreements extends Fragment {
                     agreementsRef.add(agreement);
                     Log.d(TAG, "added to db");
                 }
+                // update list view
+                populateListView();
+                Log.d(TAG, "done populating list - add/edit");
             }
-            // update list view
-            populateListView();
         }
 
     }
