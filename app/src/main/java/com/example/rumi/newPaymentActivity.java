@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,9 +22,11 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,6 +42,7 @@ public class newPaymentActivity extends AppCompatActivity {
     String userToPay;
     Intent intent;
 
+    FirebaseFirestore db;
     public newPaymentActivity(){
 
         intent = getIntent();
@@ -49,6 +53,14 @@ public class newPaymentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_payment);
+        Spinner housematesSpinner = findViewById(R.id.spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, payments.housemates);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        housematesSpinner.setAdapter(adapter);
+
+        Log.e(TAG, payments.housemates.toString());
+
 
     }
 
@@ -65,12 +77,16 @@ public class newPaymentActivity extends AppCompatActivity {
         DatePicker date = findViewById(R.id.datePicker1);
         dueDate = getDateFromDatePicker(date);
 
+        Spinner housemateSpinner = findViewById(R.id.spinner);
+        userToPay = housemateSpinner.getSelectedItem().toString();
+
 
         Intent output = new Intent();
         output.putExtra("amount", amount);
         output.putExtra("paid", false);
         output.putExtra("duedate", dueDate);
         output.putExtra("payer", userToPay);
+        output.putExtra("payee", MainActivity.username);
         setResult(RESULT_OK, output);
 
         finish();
@@ -93,6 +109,9 @@ public class newPaymentActivity extends AppCompatActivity {
 
         return calendar.getTime();
     }
+
+
+
 
 
 
