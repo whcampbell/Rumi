@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 
@@ -47,14 +49,12 @@ public class agreements extends Fragment {
 
     private ArrayList<String> agreementsArr = new ArrayList<String>();
     private String houseID;
-    private String action = "add";
     private String docId = "";
+    private int globalIndex;
 
     public agreements(FirebaseFirestore db) {
         this.db = db;
     }
-
-    // TODO: not updating after new/edit/delete - need to leave then go back
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,13 +72,12 @@ public class agreements extends Fragment {
         lv.setAdapter(adapter);
 
         // populate list with Agreement objects using info from DB
-        populateListView(adapter, lv);
+        populateListView();
 
         newAgreementButton = view.findViewById(R.id.newAgreementButton);
         newAgreementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                action = "add";
                 Intent intent = new Intent(getActivity(), newAgreementActivity.class);
                 startActivityForResult(intent, RequestCode);
             }
@@ -88,13 +87,15 @@ public class agreements extends Fragment {
     }
 
     // fill agreementsArr using db, then notify data set changed
-    private void populateListView(ArrayAdapter adapter, ListView lv) {
+    private void populateListView() {
+
+        agreementsArr.clear();
 
         // traverse db to this house's agreements
         CollectionReference agreementsRef = db.collection("Houses").document(houseID)
                 .collection("agreements");
 
-        // fill agreementArr for lv using db
+        // fill agreementArr for lv using db, notify data set changed for each existing doc
         agreementsRef.get()
                 .addOnCompleteListener(new OnCompleteListener() {
                     @Override
@@ -129,7 +130,8 @@ public class agreements extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
                 Object clickItemObj = adapterView.getAdapter().getItem(index);
                 String[] curAgreement = clickItemObj.toString().split("\n", 2);
-                // get docId
+                globalIndex = index;
+
                 Task<QuerySnapshot> colRef = db.collection("Houses").document(houseID)
                         .collection("agreements")
                         .get()
@@ -142,13 +144,13 @@ public class agreements extends Fragment {
                                         if (document.getData().get("title").equals(curAgreement[0])) {
                                             docId = document.getId();
                                             Log.d(TAG, "docId = " + docId + " => " + document.getData().get("title"));
-                                            action = "edit";
                                             // send to edit note activity, use putExtra() to pass current agreement info
                                             Intent intent = new Intent(getActivity(), editAgreementActivity.class);
                                             intent.putExtra("title", curAgreement[0]);
                                             intent.putExtra("body", curAgreement[1]);
                                             Log.d(TAG, "passing to intent: docId = " + docId);
                                             intent.putExtra("docId", docId);
+                                            intent.putExtra("index", globalIndex);
                                             startActivityForResult(intent, RequestCode);
                                         }
                                     }
@@ -166,32 +168,73 @@ public class agreements extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data){
 
         if (requestCode == RequestCode && resultCode == RESULT_OK && data != null) {
-            // get the variables from the New Agreement Activity
-            Serializable t = data.getExtras().getSerializable("title");
-            String title = t.toString();
 
-            Serializable b = data.getExtras().getSerializable("body");
-            String body = b.toString();
+            // get action type
+            String action = data.getStringExtra("action");
+            Log.d(TAG,"action = " + action);
 
-            // add values into the Map
-            Map<String, Object> agreement = new HashMap<String, Object>();
-            agreement.put("title", title);
-            agreement.put("body", body);
-
-            // traverse db to this house's agreements
-            CollectionReference agreementsRef = db.collection("Houses").document(houseID)
-                    .collection("agreements");
-
-            if (action == "edit") {
-                if (docId != null) {
-                    agreementsRef.document(docId).set(agreement);
-                }
-                else {
-                    Log.e("Err", "No such document");
+            if (action.equals("delete")) {
+                if (docId != "") {
+                    DocumentReference docRef = db.collection("Houses").document(MainActivity.houseNumber)
+                            .collection("agreements").document(docId);
+                    docRef.delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("err", "DocumentSnapshot successfully deleted!");
+                                    // update list view
+                                    Serializable i = data.getExtras().getSerializable("index");
+                                    String index = i.toString();
+                                    //lv.removeViewAt(Integer.parseInt(index));
+                                    String value = (String) adapter.getItem(Integer.parseInt(index));
+                                    adapter.remove(value);
+                                    adapter.notifyDataSetChanged();
+                                    Log.d(TAG, "removing index = " + index + " from lv");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("err", "Error deleting document", e);
+                                }
+                            });
+                } else {
+                    Log.e("err", "Error: docId is null");
                 }
             }
+            // if not delete (add or edit)
             else {
-                agreementsRef.add(agreement);
+
+                // get the variables from the New Agreement Activity
+                Serializable t = data.getExtras().getSerializable("title");
+                String title = t.toString();
+
+                Serializable b = data.getExtras().getSerializable("body");
+                String body = b.toString();
+
+                // add values into the Map
+                Map<String, Object> agreement = new HashMap<String, Object>();
+                agreement.put("title", title);
+                agreement.put("body", body);
+
+                // traverse db to this house's agreements
+                CollectionReference agreementsRef = db.collection("Houses").document(houseID)
+                        .collection("agreements");
+
+                if (action.equals("edit")) {
+                    if (docId != null) {
+                        agreementsRef.document(docId).set(agreement);
+                        Log.d(TAG, "updated db");
+                    } else {
+                        Log.e("Err", "No such document");
+                    }
+                } else if (action.equals("add")) {
+                    agreementsRef.add(agreement);
+                    Log.d(TAG, "added to db");
+                }
+                // update list view
+                populateListView();
+                Log.d(TAG, "done populating list - add/edit");
             }
         }
 

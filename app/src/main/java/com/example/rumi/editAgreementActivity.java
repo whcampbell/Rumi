@@ -47,6 +47,7 @@ public class editAgreementActivity extends AppCompatActivity {
         Intent output = new Intent();
         output.putExtra("title", title);
         output.putExtra("body", body);
+        output.putExtra("action", "edit");
         setResult(RESULT_OK, output);
 
         finish();
@@ -57,27 +58,12 @@ public class editAgreementActivity extends AppCompatActivity {
     }
 
     public void onClickDelete(View view) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String docId = getIntent().getStringExtra("docId");
-        if (docId != "") {
-            DocumentReference docRef = db.collection("Houses").document(MainActivity.houseNumber)
-                    .collection("agreements").document(docId);
-            docRef.delete()
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d("err", "DocumentSnapshot successfully deleted!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e("err", "Error deleting document", e);
-                        }
-                    });
-        } else {
-            Log.e("err", "Error: docId is null");
-        }
+        // send info back
+        Intent output = new Intent();
+        output.putExtra("action", "delete");
+        Log.d("err", "index w/i delete = " + getIntent().getIntExtra("index", -1));
+        output.putExtra("index", getIntent().getIntExtra("index", -1));
+        setResult(RESULT_OK, output);
 
         finish();
     }

@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-public class newAgreementActivity extends AppCompatActivity {
+public class newChoreActivity extends AppCompatActivity {
 
     private String title;
     private String body;
@@ -16,18 +16,18 @@ public class newAgreementActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.new_agreement);
+        setContentView(R.layout.activity_new_chore);
     }
 
     public void onClickCreate(View view) {
         // get user inputs
         title = ((EditText)findViewById(R.id.editTextTitle)).getText().toString();
-        body = ((EditText)findViewById(R.id.editTextBody)).getText().toString();
+        body = ((EditText)findViewById(R.id.editTextPerson)).getText().toString();
 
         // send info back, then add to database
         Intent output = new Intent();
-        output.putExtra("title", title);
-        output.putExtra("body", body);
+        output.putExtra("chore", title);
+        output.putExtra("person", body);
         output.putExtra("action", "add");
         setResult(RESULT_OK, output);
 
